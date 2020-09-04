@@ -1,0 +1,4 @@
+from knx_stack.send.usb_hid.report_body.usb_protocol_header import body_length
+from knx_stack.send.usb_hid.report_body.usb_protocol_header import header_length
+from knx_stack.send.usb_hid.report_body.usb_protocol_header import protocol_id
+from knx_stack.send.usb_hid.report_body.usb_protocol_header import protocol_version
