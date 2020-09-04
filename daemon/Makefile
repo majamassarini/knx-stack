@@ -1,10 +1,10 @@
-TARGET=knxstack-cemi-daemon
-SOURCE=linux_cemi.c
+TARGET=knxstack-usbhid-daemon
+SOURCE=usbhid.c
 
 all: $(TARGET)
 
 clean: 
-	rm -f knxstack-cemi-daemon
+	rm -f knxstack-usbhid-daemon
 
 $(TARGET) : $(SOURCE)
 	$(CC) -o $@ $<

@@ -1,3 +1,4 @@
+from knx_stack.address import Address
 from enum import Enum
 
 
@@ -26,12 +27,15 @@ class Medium(Enum):
 class State:
     """
     >>> import knx_stack
-    >>> address_table = knx_stack.layer.AddressTable(4097, [2], 255)
-    >>> association_table = knx_stack.layer.AssociationTable(address_table, [knx_stack.layer.AddressAssociation(address=0x002, asap=1)])
-    >>> state = State(knx_stack.Medium.tp, association_table, {1: knx_stack.datapointtypes.DPT_Switch})
+    >>> address_table = knx_stack.AddressTable(knx_stack.Address(4097),
+    ...                                              [knx_stack.GroupAddress(free_style=2)], 255)
+    >>> association_table = knx_stack.AssociationTable(address_table,
+    ...                                                      [knx_stack.layer.Association(address=knx_stack.GroupAddress(free_style=0x002),
+    ...                                                                                   asap=knx_stack.ASAP(1))])
+    >>> state = State(knx_stack.Medium.tp, association_table,
+    ...               knx_stack.GroupObjectTable({knx_stack.ASAP(1): knx_stack.datapointtypes.DPT_Switch}))
     >>> s = "BCE000010002010080"
-    >>> octects = knx_stack.Msg.stringtooctects(s)
-    >>> msg = knx_stack.Msg(octects)
+    >>> msg = knx_stack.Msg.make_from_str(s)
     >>> (ldata, _) = knx_stack.layer.L_Data.make_from(msg)
     >>> state.ldata = ldata
     >>> state.get_tsap()
@@ -40,23 +44,25 @@ class State:
     [1]
     >>> state.get_asaps_and_dpts()
     [(1, <class 'knx_stack.datapointtypes.DPT_Switch'>)]
-    >>> state.asap = 1
+    >>> state.asap = knx_stack.ASAP(1)
     >>> state.apci = 2
     >>> state.get_tsaps()
     [1]
     >>> state.get_addresses()
-    [2]
+    [(0x0002 0/2 0/0/2)]
     >>> state.get_dpt()
     <class 'knx_stack.datapointtypes.DPT_Switch'>
     """
 
-    def __init__(self, medium, association_table=None, datapointtypes=None):
+    def __init__(self,
+                 medium: 'knx_stack.Medium',
+                 association_table: 'knx_stack.AssociationTable',
+                 groupobject_table: 'knx_stack.GroupObjectTable'):
         self._association_table = association_table
-        self._datapointtypes = datapointtypes
+        self._groupobject_table = groupobject_table
         self._medium = medium
 
         self._ldata = None
-
         self._asap = None
         self._apci = None
         self._address_type = None
@@ -65,17 +71,18 @@ class State:
         self._sequence_counter_local = 0
 
     def __repr__(self, *args, **kwargs):
-        s = (""" State for %s \n\t
-        Association Table: %s \n\t
-        Datapointtypes: %s\n\t
-        LData structure (for receive functions): %s\n\t
-        ASAP: %s, APCI: %s, Address Type: %s\n\t
-        Sequence Counter (remote): %s\n\t
-        Sequence Counter (local): %s\n\t """ % (self.medium, self.association_table,
-                                                self.datapointtypes, self.ldata,
-                                                self.asap, self.apci, self.address_type,
-                                                self.sequence_counter_remote,
-                                                self.sequence_counter_local))
+        s = (""" State for %s\n
+        %s\n
+        %s\n
+        LData structure (for decode functions): %s\n
+        ASAP: %s, APCI: %s, Address Type: %s\n
+        Sequence Counter (remote): %s\n
+        Sequence Counter (local): %s\n""" % (self.medium,
+                                             self.association_table,
+                                             self.datapointtypes, self.ldata,
+                                             self.asap, self.apci, self.address_type,
+                                             self.sequence_counter_remote,
+                                             self.sequence_counter_local))
         return s
 
     @property
@@ -84,7 +91,7 @@ class State:
 
     @property
     def datapointtypes(self):
-        return self._datapointtypes
+        return self._groupobject_table
 
     @property
     def medium(self):
@@ -128,7 +135,7 @@ class State:
 
     @sequence_counter_remote.setter
     def sequence_counter_remote(self, value):
-        self._sequence_counter_remote = value % 255
+        self._sequence_counter_remote = value % 256
 
     @property
     def sequence_counter_local(self):
@@ -136,33 +143,31 @@ class State:
 
     @sequence_counter_local.setter
     def sequence_counter_local(self, value):
-        self._sequence_counter_local = value % 255
+        self._sequence_counter_local = value % 256
 
     @property
     def individual_address(self):
         return self._association_table.individual_address
 
     def get_tsap(self):
-        return self._association_table.get_tsap(self._ldata.destination) if self._association_table else None
+        return self._association_table.get_tsap(Address(self._ldata.destination))
 
     def get_asaps(self):
         tsap = self.get_tsap()
-        return self._association_table.get_asaps(tsap) if self._association_table else None
+        return self._association_table.get_asaps(tsap)
 
     def get_asaps_and_dpts(self):
-        asaps = self.get_asaps()
-        dpts = []
-        if self._datapointtypes:
-            dpts = [(asap, self._datapointtypes[asap]) for asap in asaps]
-        return dpts
+        asaps = set(self.get_asaps())
+        associations = [(asap, dpt) for asap, dpt in self._groupobject_table.associations
+                        if asap in asaps]
+        return associations
 
     def get_tsaps(self):
-        return self._association_table.get_tsaps(self._asap) if self._association_table else None
+        return self._association_table.get_tsaps(self._asap)
 
     def get_addresses(self):
         tsaps = self.get_tsaps()
-        return self._association_table.get_addresses(tsaps) if self._association_table else None
+        return self._association_table.get_addresses(tsaps)
 
     def get_dpt(self):
-        if self._datapointtypes:
-            return self._datapointtypes[self._asap]
+        return self._groupobject_table._associations[self._asap]

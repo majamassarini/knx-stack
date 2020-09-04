@@ -1,0 +1,6 @@
+[run]
+command_line = -m unittest discover
+omit = *tests*,*venv*
+
+[report]
+omit = *tests*,*__init__.py,*venv*

@@ -10,28 +10,24 @@ class Test(unittest.TestCase):
 
     def setUp(self):
         unittest.TestCase.setUp(self)
-        
-        octects = knx_stack.Msg.stringtooctects(self.L_DATA_IND)
-        self.msg = knx_stack.Msg(octects)
 
-        address_table = knx_stack.layer.AddressTable(0x0001, [], 255)
-        association_table = knx_stack.layer.AssociationTable(address_table, {})
-        new_association_table = association_table.associate(0x0002, 1)
-        self.state = knx_stack.State(knx_stack.state.Medium.usb_hid, new_association_table,
-                                     {1: knx_stack.datapointtypes.DPT_Switch})
+        self.asap = knx_stack.ASAP(1)
+        self.msg = knx_stack.Msg.make_from_str(self.L_DATA_IND)
+        address_table = knx_stack.AddressTable(knx_stack.Address(0x0001), [], 255)
+        self.association_table = knx_stack.AssociationTable(address_table)
+        self.association_table.associate(self.asap, [knx_stack.GroupAddress(free_style=0x0002)])
+        self.state = knx_stack.State(knx_stack.Medium.usb_hid, self.association_table,
+                                     knx_stack.GroupObjectTable({self.asap: knx_stack.datapointtypes.DPT_Switch}))
 
-    def testSendLDataReq(self):
+    def testencodeLDataReq(self):
         switch = knx_stack.datapointtypes.DPT_Switch()
         switch.bits.action = knx_stack.datapointtypes.DPT_Switch.Action.on
-        req_msg = knx_stack.send.layer.application.a_group_value_write.req.Msg(asap=1, dpt=switch)
-        (_, final_msg) = knx_stack.send.layer.application.a_group_value_write.req.send(self.state, req_msg)
+        req_msg = knx_stack.layer.application.a_group_value_write.req.Msg(asap=knx_stack.ASAP(1), dpt=switch)
+        final_msg = knx_stack.encode_msg(self.state, req_msg)
         self.assertEqual(str(final_msg), self.L_DATA_REQ)
 
-    def testReceiveLDataInd(self):
-        data, _ = knx_stack.receive.usb_hid.receive(self.state, self.msg)
-        self.assertEqual(data[0].asap, 1)
+    def testdecodeLDataInd(self):
+        data = knx_stack.decode_msg(self.state, self.msg)
+        self.assertEqual(data[0].asap, knx_stack.ASAP(1))
         self.assertEqual(data[0].dpt.action, knx_stack.datapointtypes.DPT_Switch.Action.on)
 
-
-if __name__ == "__main__":
-    unittest.main()

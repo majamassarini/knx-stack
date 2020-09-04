@@ -10,34 +10,27 @@ class Test(unittest.TestCase):
     def setUp(self):
         unittest.TestCase.setUp(self)
 
-        address_table = knx_stack.layer.AddressTable(0x0001, [], 255)
-        self.association_table = knx_stack.layer.AssociationTable(address_table, {})
-        octects = knx_stack.Msg.stringtooctects(self.L_DATA_CON)
-        self.msg = knx_stack.Msg(octects)
+        address_table = knx_stack.AddressTable(knx_stack.Address(0x0001), [], 255)
+        self.association_table = knx_stack.AssociationTable(address_table)
+        self.groupobject_table = knx_stack.GroupObjectTable()
+        self.msg = knx_stack.Msg.make_from_str(self.L_DATA_CON)
 
     def testLDataConWithAssociatedASAP(self):
-        new_association_table = self.association_table.associate(0x0002, 1)
-        state = knx_stack.State(knx_stack.Medium.usb_hid, new_association_table)
-        data, new_state = knx_stack.receive.usb_hid.receive(state, self.msg)
+        self.association_table.associate(knx_stack.ASAP(1), [knx_stack.GroupAddress(free_style=0x0002)])
+        state = knx_stack.State(knx_stack.Medium.usb_hid, self.association_table, self.groupobject_table)
+        data = knx_stack.decode_msg(state, self.msg)
         self.assertEqual([], data)
-        self.assertIsInstance(new_state, knx_stack.State)
-        
+
     def testLDataConWithoutAssociatedASAP(self):
-        state = knx_stack.State(knx_stack.Medium.usb_hid, self.association_table)
-        data, new_state = knx_stack.receive.usb_hid.receive(state, self.msg)
-        self.assertIsNone(data)
-        self.assertIsInstance(new_state, knx_stack.State)
+        state = knx_stack.State(knx_stack.Medium.usb_hid, self.association_table, self.groupobject_table)
+        data = knx_stack.decode_msg(state, self.msg)
+        self.assertEqual(data, [])
 
     def testLDataConWithAssociatedASAPAndDpt(self):
-        new_association_table = self.association_table.associate(0x0002, 1)
-        state = knx_stack.State(knx_stack.Medium.usb_hid, new_association_table,
-                                {1: knx_stack.datapointtypes.DPT_Switch})
-        data, new_state = knx_stack.receive.usb_hid.receive(state, self.msg)
-        self.assertEqual(data[0].asap, 1)
+        self.association_table.associate(knx_stack.ASAP(1), [knx_stack.GroupAddress(free_style=0x0002)])
+        state = knx_stack.State(knx_stack.Medium.usb_hid, self.association_table,
+                                knx_stack.GroupObjectTable({knx_stack.ASAP(1): knx_stack.datapointtypes.DPT_Switch}))
+        data = knx_stack.decode_msg(state, self.msg)
+        self.assertEqual(data[0].asap, knx_stack.ASAP(1))
         self.assertEqual(data[0].dpt.action, knx_stack.datapointtypes.DPT_Switch.Action.off)
-        self.assertEqual(data[0].status, knx_stack.layer.ConfirmFlag.ko)
-        self.assertIsInstance(new_state, knx_stack.State)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        self.assertEqual(data[0].status, knx_stack.definition.layer.ConfirmFlag.ko)

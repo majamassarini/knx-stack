@@ -8,19 +8,15 @@ class Test(unittest.TestCase):
     BUS_CONNECTED_MSG = "01130A000800020F0400000301"
 
     def testBusDisconnected(self):
-        state = []
-        octects = knx_stack.Msg.stringtooctects(self.BUS_DISCONNECTED_MSG)
-        msg = knx_stack.Msg(octects)
-        data, new_state = knx_stack.receive.usb_hid.receive(state, msg)
-        self.assertEqual(data, "Disconnected")
-    
+        state = knx_stack.State(knx_stack.Medium.usb_hid, None, None)
+        msg = knx_stack.Msg.make_from_str(self.BUS_DISCONNECTED_MSG)
+        data = knx_stack.decode_msg(state, msg)
+        self.assertTrue(len(data), 1)
+        self.assertEqual(data[0].status, 'Disconnected')
+
     def testBusConnected(self):
-        state = []
-        octects = knx_stack.Msg.stringtooctects(self.BUS_CONNECTED_MSG)
-        msg = knx_stack.Msg(octects)
-        data, new_state = knx_stack.receive.usb_hid.receive(state, msg)
-        self.assertEqual(data, "Connected")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        state = knx_stack.State(knx_stack.Medium.usb_hid, None, None)
+        msg = knx_stack.Msg.make_from_str(self.BUS_CONNECTED_MSG)
+        data = knx_stack.decode_msg(state, msg)
+        self.assertTrue(len(data), 1)
+        self.assertEqual(data[0].status, 'Connected')

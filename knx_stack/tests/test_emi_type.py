@@ -8,19 +8,15 @@ class Test(unittest.TestCase):
     EMI_2_ACTIVE_MSG = "01130A000800020F0200000502"
 
     def testCommonEMIActive(self):
-        state = []
-        octects = knx_stack.Msg.stringtooctects(self.COMMON_EMI_ACTIVE_MSG)
-        msg = knx_stack.Msg(octects)
-        data, new_state = knx_stack.receive.usb_hid.receive(state, msg)
-        self.assertEqual(data, "cEMI")
+        state = knx_stack.State(knx_stack.Medium.usb_hid, None, None)
+        msg = knx_stack.Msg.make_from_str(self.COMMON_EMI_ACTIVE_MSG)
+        data = knx_stack.decode_msg(state, msg)
+        self.assertTrue(len(data), 1)
+        self.assertEqual(data[0].type, "cEMI")
     
     def testEMI2Active(self):
-        state = []
-        octects = knx_stack.Msg.stringtooctects(self.EMI_2_ACTIVE_MSG)
-        msg = knx_stack.Msg(octects)
-        data, new_state = knx_stack.receive.usb_hid.receive(state, msg)
-        self.assertEqual(data, "emi2")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        state = knx_stack.State(knx_stack.Medium.usb_hid, None, None)
+        msg = knx_stack.Msg.make_from_str(self.EMI_2_ACTIVE_MSG)
+        data = knx_stack.decode_msg(state, msg)
+        self.assertTrue(len(data), 1)
+        self.assertEqual(data[0].type, "emi2")

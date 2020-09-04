@@ -6,16 +6,25 @@ import decimal
 
 
 class DPT_Factory(object):
-    
-    def make(self, dpt, fields_values):
+
+    @staticmethod
+    def make(dpt: str, fields_values: dict) -> 'knx_stack.datapointtypes.DPT':
         """
-        @param dpt: string
-        @param fields_values: dictionary of default field values
-        
-        >>> factory = DPT_Factory()
-        >>> dpt = factory.make("DPTVimarScene", {"index": 7, "commands": "attiva"})
-        >>> dpt.command == dpt.Command.attiva
+        Build a knx_stack.datapointtypes.DPT from a dpt name and a dictionary of values.
+
+        :param dpt: a DPT name
+        :param fields_values: a dictionary of values for the DPT's fields
+        :return: a knx_stack.datapointtypes.DPT instance
+
+        >>> import knx_stack
+        >>> factory = knx_stack.datapointtypes.DPT_Factory()
+
+        >>> dpt = factory.make("DPT_Control_Dimming", {"step": 7, "direction": "up"})
+        >>> dpt.step
+        7
+        >>> dpt.direction == knx_stack.datapointtypes.DPT_Control_Dimming.Direction.up
         True
+
         >>> dpt = factory.make("DPT_Value_Temp", {"decoded_value": -1.0})
         >>> dpt.decode()
         -1.0
@@ -36,26 +45,29 @@ class Description_Factory(object):
     @staticmethod
     def make(dpt):
         """
-        @param dpt: a dpt
+        Build a *Description* from a *knx_stack.datapointtypes.DPT*
 
-        >>> factory = Description_Factory()
-        >>> switch = DPT_Switch()
-        >>> dpt = factory.make(switch)
-        >>> print(dpt)
+        A *Description* is a tuple **(dpt name, dictionary with dpt fields values)**
+
+        :param dpt: knx_stack.datapointtypes.DPT
+        :return: a tuple *(dpt name, dictionary with dpt fields values)*
+
+
+        >>> import knx_stack
+        >>> factory = knx_stack.datapointtypes.Description_Factory()
+
+        >>> switch = knx_stack.datapointtypes.DPT_Switch()
+        >>> factory.make(switch)
         ('DPT_Switch', {'action': 'off'})
-        >>> brightness = DPTVimarScene()
-        >>> brightness.value = 0x32
-        >>> dpt = factory.make(brightness)
-        >>> dpt[1]["command"]
-        'attiva'
-        >>> dpt[1]["index"]
-        50
+
+        >>> brightness = knx_stack.datapointtypes.DPT_Value_Lux()
+        >>> brightness.encode(10000)
+        >>> factory.make(brightness)
+        ('DPT_Value_Lux', {'decoded_value': 9999.36})
         """
         description = {}
         fields = (set([name for name, _ in inspect.getmembers(dpt.__class__, inspect.isdatadescriptor)]) -
                       set(['bits', 'value', '__weakref__', '_b_base_', '_b_needsfree_', '_objects']))
-        if not fields:
-            fields.add("value")
         for name in fields:
             field = dpt.__getattribute__(name)
             if isinstance(field, IntEnum):
@@ -65,26 +77,23 @@ class Description_Factory(object):
         if (isinstance(dpt, DPT_Float_16) or
                 isinstance(dpt, DPT_Float_32)):
             description["decoded_value"] = dpt.decode()
+        elif not fields:
+            description["value"] = dpt.value
         return dpt.__class__.__name__, description
 
 
-class Description(object):
+class DPT(object):
+    """
+    An abstract KNX DPT
+    """
 
     class Length(Enum):
         LESS_THAN_A_BYTE = "less_than_a_byte"
         A_BYTE_OR_MORE = "a_byte_or_more"
 
     def __repr__(self):
-        description = {}
-        fields = (set([name for name, _ in inspect.getmembers(self.__class__, inspect.isdatadescriptor)]) -
-                  set(['bits', 'value', '__weakref__', '_b_base_', '_b_needsfree_', '_objects']))
-        for name in fields:
-            field = self.__getattribute__(name)
-            if isinstance(field, IntEnum):
-                description[name] = field.name
-            else:
-                description[name] = field
-        return self.__class__.__name__ + ": " + str(description)
+        description = Description_Factory.make(self)
+        return "{} {}".format(description[0], description[1])
 
     length = Length.A_BYTE_OR_MORE
 
@@ -94,9 +103,10 @@ class _DPT_Switch(LittleEndianStructure):
     _fields_ = [('action', c_uint8, 1)]
 
 
-class DPT_Switch(Union, Description):
+class DPT_Switch(Union, DPT):
     """
-    >>> dpt = DPT_Switch()
+    >>> import knx_stack
+    >>> dpt = knx_stack.datapointtypes.DPT_Switch()
     >>> dpt.value = 0x80
     >>> dpt.action == dpt.Action.off
     True
@@ -108,7 +118,7 @@ class DPT_Switch(Union, Description):
     0
     """
 
-    length = Description.Length.LESS_THAN_A_BYTE
+    length = DPT.Length.LESS_THAN_A_BYTE
 
     class Action(IntEnum):
         off = 0x00,
@@ -127,9 +137,10 @@ class DPT_Switch(Union, Description):
                 ('value', c_uint8)]
 
 
-class DPT_Alarm(DPT_Switch, Description):
+class DPT_Alarm(DPT_Switch, DPT):
     """
-    >>> dpt = DPT_Alarm()
+    >>> import knx_stack
+    >>> dpt = knx_stack.datapointtypes.DPT_Alarm()
     >>> dpt.value = 0x80
     >>> dpt.action == dpt.Action.no_alarm
     True
@@ -141,7 +152,7 @@ class DPT_Alarm(DPT_Switch, Description):
     0
     """
 
-    length = Description.Length.LESS_THAN_A_BYTE
+    length = DPT.Length.LESS_THAN_A_BYTE
 
     class Action(IntEnum):
         no_alarm = 0x00,
@@ -154,9 +165,10 @@ class _DPT_UpDown(LittleEndianStructure):
 
     _fields_ = [('direction', c_uint8, 1)]    
     
-class DPT_UpDown(Union, Description):
+class DPT_UpDown(Union, DPT):
     """
-    >>> updown = DPT_UpDown()
+    >>> import knx_stack
+    >>> updown = knx_stack.datapointtypes.DPT_UpDown()
     >>> updown.value = 0x80
     >>> updown.direction == updown.Direction.up
     True
@@ -168,7 +180,7 @@ class DPT_UpDown(Union, Description):
     0
     """
 
-    length = Description.Length.LESS_THAN_A_BYTE
+    length = DPT.Length.LESS_THAN_A_BYTE
 
     class Direction(IntEnum):
         up = 0x00,
@@ -191,9 +203,10 @@ class _DPT_Start(LittleEndianStructure):
 
     _fields_ = [('action', c_uint8, 1)]
 
-class DPT_Start(Union, Description):
+class DPT_Start(Union, DPT):
     """
-    >>> start = DPT_Start()
+    >>> import knx_stack
+    >>> start = knx_stack.datapointtypes.DPT_Start()
     >>> start.value = 0x80
     >>> start.action == start.Action.stop
     True
@@ -205,7 +218,7 @@ class DPT_Start(Union, Description):
     0
     """
 
-    length = Description.Length.LESS_THAN_A_BYTE
+    length = DPT.Length.LESS_THAN_A_BYTE
 
     class Action(IntEnum):
         stop = 0x00,
@@ -233,9 +246,10 @@ class _DPTVimarScene(LittleEndianStructure):
                 ('command', c_uint8, 2)]
 
 
-class DPTVimarScene(Union, Description):
+class DPTVimarScene(Union, DPT):
     """
-    >>> scene = DPTVimarScene()
+    >>> import knx_stack
+    >>> scene = knx_stack.datapointtypes.DPTVimarScene()
     >>> scene.value = 0x01
     >>> scene.command == scene.Command.attiva
     True
@@ -259,7 +273,7 @@ class DPTVimarScene(Union, Description):
     @command.setter
     def command(self, value):
         value = getattr(self.Command, value)
-        self.bits.command =  self.Command(value)
+        self.bits.command = self.Command(value)
         
     @property
     def index(self):
@@ -271,11 +285,101 @@ class DPTVimarScene(Union, Description):
 
     _fields_ = [('bits', _DPTVimarScene),
                 ('value', c_uint8)]
-    
 
-class DPT_Brightness(Union, Description):
+
+class _DPT_SceneControl(LittleEndianStructure):
+    _fields_ = [('number', c_uint8, 6),
+                ('reserved', c_uint8, 1),
+                ('command', c_uint8, 1)]
+
+
+class DPT_SceneControl(Union, DPT):
     """
-    >>> brightness = DPT_Brightness()
+    >>> import knx_stack
+    >>> scene = knx_stack.datapointtypes.DPT_SceneControl()
+    >>> scene.value = 0x01
+    >>> scene.command == scene.Command.activate
+    True
+    >>> scene.number == 1
+    True
+    >>> scene.command = "learn"
+    >>> scene.bits.command
+    1
+    """
+
+    class Command(IntEnum):
+        activate = 0x00,
+        learn = 0x01,
+
+    @property
+    def command(self):
+        return self.Command(self.bits.command)
+
+    @command.setter
+    def command(self, value):
+        value = getattr(self.Command, value)
+        self.bits.command = self.Command(value)
+
+    @property
+    def number(self):
+        return self.bits.number
+
+    @number.setter
+    def number(self, value):
+        self.bits.number = value
+
+    _fields_ = [('bits', _DPT_SceneControl),
+                ('value', c_uint8)]
+
+
+class _DPT_Control_Dimming(LittleEndianStructure):
+
+    _fields_ = [('step', c_uint8, 3),
+                ('direction', c_uint8, 1)]
+
+
+class DPT_Control_Dimming(Union, DPT):
+    """
+    >>> import knx_stack
+    >>> c = knx_stack.datapointtypes.DPT_Control_Dimming()
+    >>> c.value = 0x0F
+    >>> c.step == 7
+    True
+    >>> c.direction == 1
+    True
+    >>> c.direction = "down"
+    >>> c.value
+    7
+    """
+
+    class Direction(IntEnum):
+        down = 0x00,
+        up = 0x01,
+
+    @property
+    def step(self):
+        return self.bits.step
+
+    @step.setter
+    def step(self, value):
+        self.bits.step = value
+
+    @property
+    def direction(self):
+        return self.Direction(self.bits.direction)
+
+    @direction.setter
+    def direction(self, value):
+        value = getattr(self.Direction, value)
+        self.bits.direction = self.Direction(value)
+
+    _fields_ = [('bits', _DPT_Control_Dimming),
+                ('value', c_uint8)]
+
+class DPT_Brightness(Union, DPT):
+    """
+    >>> import knx_stack
+    >>> brightness = knx_stack.datapointtypes.DPT_Brightness()
     >>> brightness.value = 0x32
     >>> brightness.value
     50
@@ -304,9 +408,10 @@ class _DPTSetupClima(LittleEndianStructure):
                 ]
 
 
-class DPTSetupClima(Union, Description):
+class DPTSetupClima(Union, DPT):
     """
-    >>> setup = DPTSetupClima()
+    >>> import knx_stack
+    >>> setup = knx_stack.datapointtypes.DPTSetupClima()
     >>> setup.value = 0x00
     >>> setup.funzionamento == setup.Funzionamento.off
     True
@@ -434,9 +539,10 @@ class _DPTInfoClimaReport(LittleEndianStructure):
     ]
 
 
-class DPTInfoClimaReport(Union, Description):
+class DPTInfoClimaReport(Union, DPT):
     """
-    >>> info = DPTInfoClimaReport()
+    >>> import knx_stack
+    >>> info = knx_stack.datapointtypes.DPTInfoClimaReport()
     >>> info.value = 0x00E3E369
     >>> info.temperatura
     36.1
@@ -524,7 +630,8 @@ class _DPT_Float_16(LittleEndianStructure):
 
 class DPT_Float_16(Union):
     """
-    >>> f = DPT_Float_16()
+    >>> import knx_stack
+    >>> f = knx_stack.datapointtypes.DPT_Float_16()
     >>> f.value = 1000
     >>> f.decode()
     10.0
@@ -555,7 +662,7 @@ class DPT_Float_16(Union):
     _fields_ = [('bits', _DPT_Float_16),
                 ('value', c_uint16)]
 
-    length = Description.Length.A_BYTE_OR_MORE
+    length = DPT.Length.A_BYTE_OR_MORE
 
     def decode(self):
         mantissa = self.bits.mantissa if self.bits.sign == 1 else self.twos_comp(self.bits.mantissa, 11)
@@ -591,13 +698,14 @@ class DPT_Float_16(Union):
         return comp_two
 
     def __repr__(self):
-        description = {"decoded_value": self.decode()}
-        return self.__class__.__name__ + ": " + str(description)
+        DPT = {"decoded_value": self.decode()}
+        return self.__class__.__name__ + ": " + str(DPT)
 
 
 class DPT_Value_Wsp(DPT_Float_16):
     """
-    >>> f = DPT_Value_Wsp()
+    >>> import knx_stack
+    >>> f = knx_stack.datapointtypes.DPT_Value_Wsp()
     >>> f.value = 1000
     >>> f.decode()
     10.0
@@ -609,7 +717,8 @@ class DPT_Value_Wsp(DPT_Float_16):
 
 class DPT_Value_Temp(DPT_Float_16):
     """
-    >>> f = DPT_Value_Temp()
+    >>> import knx_stack
+    >>> f = knx_stack.datapointtypes.DPT_Value_Temp()
     >>> f.value = 1000
     >>> f.decode()
     10.0
@@ -621,7 +730,8 @@ class DPT_Value_Temp(DPT_Float_16):
 
 class DPT_Value_Lux(DPT_Float_16):
     """
-    >>> f = DPT_Value_Lux()
+    >>> import knx_stack
+    >>> f = knx_stack.datapointtypes.DPT_Value_Lux()
     >>> f.value = 1000
     >>> f.decode()
     10.0
@@ -639,7 +749,8 @@ class DPT_Value_Lux(DPT_Float_16):
 
 class DPT_Float_32(Union):
     """
-    >>> f = DPT_Float_32()
+    >>> import knx_stack
+    >>> f = knx_stack.datapointtypes.DPT_Float_32()
     >>> f.value = 0x45C80000
     >>> f.decode()
     6400.0
@@ -654,7 +765,7 @@ class DPT_Float_32(Union):
     _fields_ = [('bits', c_float),
                 ('value', c_uint32)]
 
-    length = Description.Length.A_BYTE_OR_MORE
+    length = DPT.Length.A_BYTE_OR_MORE
 
     def decode(self):
         return self.bits
@@ -663,16 +774,13 @@ class DPT_Float_32(Union):
         self.bits = value
 
     def __repr__(self):
-        description = {"decoded_value": self.decode()}
-        return self.__class__.__name__ + ": " + str(description)
+        DPT = {"decoded_value": self.decode()}
+        return self.__class__.__name__ + ": " + str(DPT)
 
 
 class DPT_Value_Power(DPT_Float_32):
     """
-    >>> f = DPT_Value_Power()
+    >>> import knx_stack
+    >>> f = knx_stack.datapointtypes.DPT_Value_Power()
     """
 
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
