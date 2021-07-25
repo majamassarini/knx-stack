@@ -1,0 +1,17 @@
+env:
+  - CODECOV_TOKEN='1d4964eb-b04b-4931-af9f-29cfac603007'
+language: python
+python:
+  - "3.8"
+before_install:
+  - python --version
+  - pip install -U pip
+  - pip install -U pytest
+  - pip install codecov
+install:
+  - python setup.py install
+# command to run tests
+script:
+  - python -m coverage run
+after_success:
+  - codecov
