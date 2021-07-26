@@ -28,6 +28,15 @@ def load_tests(loader, tests, ignore):
     tests.addTests(doctest.DocTestSuite(knx_stack.encode.knxnet_ip.tunneling.ack))
     tests.addTests(doctest.DocTestSuite(knx_stack.encode.knxnet_ip.header))
 
+    tests.addTests(doctest.DocTestSuite(knx_stack.decode.layer.application.a_group_value_read.ind))
+    tests.addTests(doctest.DocTestSuite(knx_stack.decode.layer.application.a_group_value_read.con))
+    tests.addTests(doctest.DocTestSuite(knx_stack.decode.layer.application.a_group_value_write.ind))
+    tests.addTests(doctest.DocTestSuite(knx_stack.decode.layer.application.a_group_value_write.con))
+    tests.addTests(doctest.DocTestSuite(knx_stack.decode.layer.application.a_property_value_read.ind))
+    tests.addTests(doctest.DocTestSuite(knx_stack.decode.layer.application.a_property_value_read.con))
+    tests.addTests(doctest.DocTestSuite(knx_stack.decode.layer.application.a_property_value_write.ind))
+    tests.addTests(doctest.DocTestSuite(knx_stack.decode.layer.application.a_property_value_write.con))
+
     tests.addTests(doctest.DocTestSuite(knx_stack.decode.knxnet_ip.core.search.res))
     tests.addTests(doctest.DocTestSuite(knx_stack.decode.knxnet_ip.core.connect.res))
     tests.addTests(doctest.DocTestSuite(knx_stack.decode.knxnet_ip.core.disconnect.res))

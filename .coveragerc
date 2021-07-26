@@ -1,6 +1,6 @@
 [run]
 command_line = -m unittest discover
-omit = *tests*,*venv*
+omit = *tests*,*venv*,*client*
 
 [report]
-omit = *tests*,*__init__.py,*venv*
+omit = *tests*,*__init__.py,*venv*,*client*
