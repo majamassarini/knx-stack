@@ -1,11 +1,16 @@
+from os import path
 from setuptools import setup, find_packages
 
+long_description = ""
+with open(path.join(".", 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
 setup(name="knx-stack",
-      version="0.9",
+      version="0.9.1",
       description="A python3 KNX stack for USB HID and KNXnet IP",
       url="https://github.com/majamassarini/knx-stack",
-      long_description="A python3 KNX stack for USB HID and KNXnet IP, "
-                       "which can be used both in a synchronous and asynchronous client.",
+      long_description=long_description,
+      long_description_content_type='text/markdown',
       author="Maja Massarini",
       author_email="maja.massarini@gmail.com",
       license="MIT",
