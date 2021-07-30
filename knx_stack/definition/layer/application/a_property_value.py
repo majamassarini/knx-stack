@@ -13,6 +13,7 @@ class _PropertyServiceHeader(LittleEndianStructure):
 
 class PropertyServiceHeader(Union):
     """
+    >>> from knx_stack.definition.layer.application.a_property_value import PropertyServiceHeader
     >>> h = PropertyServiceHeader()
     >>> h.value = 0x0079101F
     >>> h.bits.object_index

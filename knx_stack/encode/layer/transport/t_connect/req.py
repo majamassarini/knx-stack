@@ -7,6 +7,7 @@ from knx_stack.encode.layer.network.n_data_individual import req
 def encode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> 'knx_stack.Msg':
     """
     >>> import knx_stack
+    >>> from knx_stack.encode.layer.transport.t_connect.req import encode
     >>> address_table = knx_stack.AddressTable(knx_stack.Address(0x1001), [], 255)
     >>> association_table = knx_stack.AssociationTable(address_table, [])
     >>> state = knx_stack.state.State(knx_stack.state.Medium.usb_hid, association_table, None)

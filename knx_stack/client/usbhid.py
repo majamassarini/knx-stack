@@ -27,9 +27,9 @@ class Client(object):
 
                 address_table = knx_stack.layer.AddressTable(knx_stack.Address(0x100A), [], 255)
                 association_table = knx_stack.layer.AssociationTable(address_table, {})
-                asap_device = knx_stack.ASAP(1, "a light switch device")
+                asap_stack_instance = knx_stack.ASAP(1, "this stack instance identifier on bus")
                 asap_command = knx_stack.ASAP(2, "turn on/off light")
-                association_table.associate(asap_device, [knx_stack.Address(0x1029)])
+                association_table.associate(asap_stack_instance, [knx_stack.Address(0x1029)])
                 association_table.associate(asap_command, [knx_stack.GroupAddress(free_style=0x0F81)])
                 state = knx_stack.State(knx_stack.Medium.usb_hid,
                                         association_table,

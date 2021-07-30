@@ -114,6 +114,7 @@ class APCI(Union):
 class L_Data(LittleEndianStructure):
     """
     >>> from knx_stack.msg import Msg
+    >>> from knx_stack.definition.layer.link.ldata import L_Data, AddressType, NSDU
     >>> s = "BCE000010002010080"
     >>> msg = Msg.make_from_str(s)
     >>> (ldata, _) = L_Data.make_from(msg)

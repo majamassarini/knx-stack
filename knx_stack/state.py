@@ -32,8 +32,8 @@ class State:
     >>> association_table = knx_stack.AssociationTable(address_table,
     ...                                                      [knx_stack.layer.Association(address=knx_stack.GroupAddress(free_style=0x002),
     ...                                                                                   asap=knx_stack.ASAP(1))])
-    >>> state = State(knx_stack.Medium.tp, association_table,
-    ...               knx_stack.GroupObjectTable({knx_stack.ASAP(1): knx_stack.datapointtypes.DPT_Switch}))
+    >>> state = knx_stack.State(knx_stack.Medium.tp, association_table,
+    ...                         knx_stack.GroupObjectTable({knx_stack.ASAP(1): knx_stack.datapointtypes.DPT_Switch}))
     >>> s = "BCE000010002010080"
     >>> msg = knx_stack.Msg.make_from_str(s)
     >>> (ldata, _) = knx_stack.layer.L_Data.make_from(msg)

@@ -6,6 +6,7 @@ from knx_stack.definition.knxnet_ip.core.disconnect.res import Msg
 def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
     """
     >>> import knx_stack
+    >>> from knx_stack.decode.knxnet_ip.core.disconnect.res import decode
     >>> example = knx_stack.knxnet_ip.Msg.make_from_str("00080500")
     >>> state = knx_stack.knxnet_ip.State(knx_stack.Medium.knxnet_ip)
     >>> res = decode(state, example)
