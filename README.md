@@ -138,7 +138,7 @@ It can be used with an **asynchronous** or **synchronous** client.
 ```
 
 
-## Getting Started
+## Installation
 
 ```
 pip install knx-stack
@@ -148,4 +148,11 @@ pip install knx-stack
 
 [Documentation](https://maja-massarini-knx-stack.readthedocs-hosted.com/en/latest/?)
 
+## Contributing
+
+Pull requests are welcome, and I am waiting for them.
+
+## License
+
+knx-stack is licensed under the MIT license.
 
