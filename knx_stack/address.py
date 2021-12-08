@@ -2,16 +2,18 @@ from ctypes import c_uint8, c_uint16, LittleEndianStructure, Union
 
 
 class ThreeLevelStyle(LittleEndianStructure):
-    _fields_ = [('sub', c_uint8, 8),
-                ('middle', c_uint8, 3),
-                ('main', c_uint8, 5),
-                ]
+    _fields_ = [
+        ("sub", c_uint8, 8),
+        ("middle", c_uint8, 3),
+        ("main", c_uint8, 5),
+    ]
 
 
 class TwoLevelStyle(LittleEndianStructure):
-    _fields_ = [('sub', c_uint16, 11),
-                ('main', c_uint16, 5),
-                ]
+    _fields_ = [
+        ("sub", c_uint16, 11),
+        ("main", c_uint16, 5),
+    ]
 
 
 class Address(Union):
@@ -26,8 +28,9 @@ class Address(Union):
     10
     """
 
-    _fields_ = [('free_style', c_uint16),
-                ]
+    _fields_ = [
+        ("free_style", c_uint16),
+    ]
 
     def __repr__(self, *args, **kwargs):
         return "0x%04X" % (self.free_style)
@@ -70,17 +73,21 @@ class GroupAddress(Union):
     (0x1202 2/514 2/2/2)
     """
 
-    _fields_ = [('free_style', c_uint16),
-                ('two_level_style', TwoLevelStyle),
-                ('three_level_style', ThreeLevelStyle),
-                ]
+    _fields_ = [
+        ("free_style", c_uint16),
+        ("two_level_style", TwoLevelStyle),
+        ("three_level_style", ThreeLevelStyle),
+    ]
 
     def __repr__(self, *args, **kwargs):
-        return "(0x%04X %d/%d %d/%d/%d)" % \
-               (self.free_style,
-                self.two_level_style.main, self.two_level_style.sub,
-                self.three_level_style.main, self.three_level_style.middle, self.three_level_style.sub,
-                )
+        return "(0x%04X %d/%d %d/%d/%d)" % (
+            self.free_style,
+            self.two_level_style.main,
+            self.two_level_style.sub,
+            self.three_level_style.main,
+            self.three_level_style.middle,
+            self.three_level_style.sub,
+        )
 
     def __eq__(self, other):
         try:
@@ -90,5 +97,3 @@ class GroupAddress(Union):
 
     def __hash__(self):
         return self.free_style
-
-

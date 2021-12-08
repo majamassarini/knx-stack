@@ -2,7 +2,7 @@ from typing import Iterable
 from knx_stack.definition.knxnet_ip.core.connectionstate.res import Msg, Status
 
 
-def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
+def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
     """
     >>> import knx_stack
     >>> example = knx_stack.knxnet_ip.Msg.make_from_str("00087000")

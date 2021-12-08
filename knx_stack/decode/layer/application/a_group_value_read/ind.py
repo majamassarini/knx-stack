@@ -3,7 +3,7 @@ from knx_stack.definition.layer.application.a_group_value_read.ind import Msg
 from knx_stack.decode.layer.application import a_group_value
 
 
-def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
+def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
     """
     >>> import knx_stack
     >>> asap = knx_stack.ASAP(1)
@@ -17,7 +17,7 @@ def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
     [GroupValueReadInd (DPT_Switch {'action': 'off'} for asap 1)]
     """
     group_values = a_group_value.decode(state, msg)
-    group_values_read = [Msg(asap=group_value.asap,
-                             dpt=group_value.dpt)
-                         for group_value in group_values]
+    group_values_read = [
+        Msg(asap=group_value.asap, dpt=group_value.dpt) for group_value in group_values
+    ]
     return group_values_read

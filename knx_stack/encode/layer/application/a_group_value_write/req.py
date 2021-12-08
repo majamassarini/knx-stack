@@ -2,7 +2,10 @@ from knx_stack.encode.layer.transport.t_data_group import req
 from knx_stack.encode.layer.application.a_group_value_write.encode import al_encode
 
 
-def encode(state: 'knx_stack.State', msg: 'knx_stack.layer.application.a_group_value_write.req.Msg') -> 'knx_stack.Msg':
+def encode(
+    state: "knx_stack.State",
+    msg: "knx_stack.layer.application.a_group_value_write.req.Msg",
+) -> "knx_stack.Msg":
     """
     >>> import knx_stack
     >>> asap = knx_stack.ASAP(1)

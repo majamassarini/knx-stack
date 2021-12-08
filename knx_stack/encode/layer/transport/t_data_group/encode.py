@@ -2,7 +2,7 @@ from knx_stack import Msg, Octect
 from knx_stack.definition import layer
 
 
-def tl_encode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> 'knx_stack.Msg':
+def tl_encode(state: "knx_stack.State", msg: "knx_stack.Msg") -> "knx_stack.Msg":
     new_msg = msg
     if state.get_tsaps():
         ldata = layer.L_Data()

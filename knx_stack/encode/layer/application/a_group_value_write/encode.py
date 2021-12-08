@@ -4,9 +4,13 @@ from knx_stack.definition import layer
 from knx_stack.datapointtypes import DPT
 
 
-def al_encode(state: 'knx_stack.State',
-              msg: Union['knx_stack.layer.application.a_group_value_write.req.Msg',
-                         'knx_stack.layer.application.a_group_value_write.ind.Msg']) -> 'knx_stack.Msg':
+def al_encode(
+    state: "knx_stack.State",
+    msg: Union[
+        "knx_stack.layer.application.a_group_value_write.req.Msg",
+        "knx_stack.layer.application.a_group_value_write.ind.Msg",
+    ],
+) -> "knx_stack.Msg":
     apci = 0x80
     state.asap = msg.asap
     state.apci = apci
@@ -28,5 +32,7 @@ def al_encode(state: 'knx_stack.State',
             new_msg = Msg([Octect(value=ldata.apci), short.MSB, short.LSB])
         elif dpt.value.size == 4:
             long = Long(value=msg.dpt.value)
-            new_msg = Msg([Octect(value=ldata.apci), long.B4, long.B3, long.B2, long.B1])
+            new_msg = Msg(
+                [Octect(value=ldata.apci), long.B4, long.B3, long.B2, long.B1]
+            )
     return new_msg

@@ -6,5 +6,6 @@ class Msg(NamedTuple):
     port_control_endpoint: int
 
     def __repr__(self):
-        return "ConnectionstateReq (control endpoint = {}:{})".format(self.addr_control_endpoint,
-                                                                      self.port_control_endpoint)
+        return "ConnectionstateReq (control endpoint = {}:{})".format(
+            self.addr_control_endpoint, self.port_control_endpoint
+        )

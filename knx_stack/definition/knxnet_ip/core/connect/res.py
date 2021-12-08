@@ -12,11 +12,10 @@ class Status(IntEnum):
 class Msg(NamedTuple):
     ip: str
     port: int
-    individual_address: 'knx_stack.Address'
-    status: 'knx_stack.knxnet_ip.core.connect.Status'
+    individual_address: "knx_stack.Address"
+    status: "knx_stack.knxnet_ip.core.connect.Status"
 
     def __repr__(self):
-        return "ConnectRes(ip={}, port={}, individual address={}, status={})".format(self.ip,
-                                                                                     self.port,
-                                                                                     self.individual_address,
-                                                                                     self.status)
+        return "ConnectRes(ip={}, port={}, individual address={}, status={})".format(
+            self.ip, self.port, self.individual_address, self.status
+        )

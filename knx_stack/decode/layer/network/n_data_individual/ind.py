@@ -3,7 +3,7 @@ from knx_stack.definition.layer import NSDU
 from knx_stack.decode.layer import transport
 
 
-def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[NamedTuple]:
+def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTuple]:
     result = []
     if state.ldata.nsdu == NSDU.T_Data_Individual_PDU:
         result = transport.t_data_individual.ind.decode(state, msg)

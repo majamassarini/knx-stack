@@ -3,7 +3,7 @@ import knx_stack
 
 
 class Test(unittest.TestCase):
-    
+
     L_DATA_IND = "0113130008000B010300002900BCE000010002010080"
     L_DATA_IND_2 = "0113140008000C010300002900B4E00001000202008005"
 
@@ -14,8 +14,14 @@ class Test(unittest.TestCase):
         self.association_table = knx_stack.AssociationTable(address_table)
         self.groupobject_table = knx_stack.GroupObjectTable()
         self.asap = knx_stack.ASAP(1, "prova")
-        self.association_table.associate(self.asap, [knx_stack.GroupAddress(free_style=0x0002)])
-        self.state = knx_stack.State(knx_stack.state.Medium.usb_hid, self.association_table, self.groupobject_table)
+        self.association_table.associate(
+            self.asap, [knx_stack.GroupAddress(free_style=0x0002)]
+        )
+        self.state = knx_stack.State(
+            knx_stack.state.Medium.usb_hid,
+            self.association_table,
+            self.groupobject_table,
+        )
         self.msg = knx_stack.Msg.make_from_str(self.L_DATA_IND)
         self.msg2 = knx_stack.Msg.make_from_str(self.L_DATA_IND_2)
 
@@ -23,24 +29,40 @@ class Test(unittest.TestCase):
         data = knx_stack.decode_msg(self.state, self.msg)
         self.assertEqual([], data)
 
-    def testLDataIndWithoutAssociatedASAP(self):        
-        state = knx_stack.State(knx_stack.state.Medium.usb_hid, self.association_table, self.groupobject_table)
-        self.association_table.disassociate(self.asap, [knx_stack.GroupAddress(free_style=0x0002)])
+    def testLDataIndWithoutAssociatedASAP(self):
+        state = knx_stack.State(
+            knx_stack.state.Medium.usb_hid,
+            self.association_table,
+            self.groupobject_table,
+        )
+        self.association_table.disassociate(
+            self.asap, [knx_stack.GroupAddress(free_style=0x0002)]
+        )
         data = knx_stack.decode_msg(state, self.msg)
         self.assertEqual([], data)
 
     def testLDataIndWithAssociatedASAPAndDpt(self):
-        state = knx_stack.State(knx_stack.state.Medium.usb_hid,
-                                self.association_table,
-                                knx_stack.GroupObjectTable({self.asap: knx_stack.datapointtypes.DPT_Switch}))
+        state = knx_stack.State(
+            knx_stack.state.Medium.usb_hid,
+            self.association_table,
+            knx_stack.GroupObjectTable(
+                {self.asap: knx_stack.datapointtypes.DPT_Switch}
+            ),
+        )
         data = knx_stack.decode_msg(state, self.msg)
         self.assertEqual(data[0].asap, knx_stack.ASAP(1))
-        self.assertEqual(data[0].dpt.action, knx_stack.datapointtypes.DPT_Switch.Action.off)
+        self.assertEqual(
+            data[0].dpt.action, knx_stack.datapointtypes.DPT_Switch.Action.off
+        )
 
     def testLDataIndWithAssociatedASAPAndDpt2(self):
-        state = knx_stack.State(knx_stack.state.Medium.usb_hid,
-                                self.association_table,
-                                knx_stack.GroupObjectTable({self.asap: knx_stack.datapointtypes.DPTVimarScene}))
+        state = knx_stack.State(
+            knx_stack.state.Medium.usb_hid,
+            self.association_table,
+            knx_stack.GroupObjectTable(
+                {self.asap: knx_stack.datapointtypes.DPTVimarScene}
+            ),
+        )
         data = knx_stack.decode_msg(state, self.msg2)
         self.assertEqual(data[0].asap, knx_stack.ASAP(1))
         self.assertEqual(data[0].dpt.index, 5)
@@ -56,9 +78,11 @@ class TestDPTValue(unittest.TestCase):
         association_table = knx_stack.AssociationTable(address_table)
         asap = knx_stack.ASAP(1, "prova")
         association_table.associate(asap, [knx_stack.GroupAddress(free_style=0x0A02)])
-        self.state = knx_stack.State(knx_stack.Medium.usb_hid,
-                                     association_table,
-                                     knx_stack.GroupObjectTable({asap: knx_stack.datapointtypes.DPT_Value_Temp}))
+        self.state = knx_stack.State(
+            knx_stack.Medium.usb_hid,
+            association_table,
+            knx_stack.GroupObjectTable({asap: knx_stack.datapointtypes.DPT_Value_Temp}),
+        )
         self.msg = knx_stack.Msg.make_from_str(self.L_DATA_NEG_TEMP_DPT)
         self.msg2 = knx_stack.Msg.make_from_str(self.L_DATA_NEG_TEMP_DPT2)
 
@@ -71,4 +95,3 @@ class TestDPTValue(unittest.TestCase):
         data = knx_stack.decode_msg(self.state, self.msg2)
         self.assertEqual(data[0].asap, knx_stack.ASAP(1))
         self.assertEqual(data[0].dpt.decode(), -0.4)  # is -20.08
-

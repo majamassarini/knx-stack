@@ -3,8 +3,10 @@ from knx_stack.definition import layer
 from knx_stack.encode.layer.transport.t_data_individual import req
 
 
-def encode(state: 'knx_stack.State',
-           msg: 'knx_stack.layer.application.a_property_value_read.req.Msg') -> 'knx_stack.Msg':
+def encode(
+    state: "knx_stack.State",
+    msg: "knx_stack.layer.application.a_property_value_read.req.Msg",
+) -> "knx_stack.Msg":
     """
     >>> import knx_stack
     >>> asap = knx_stack.ASAP(0)

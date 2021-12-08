@@ -6,7 +6,9 @@ from knx_stack.encode.knxnet_ip import header
 from knx_stack.encode.knxnet_ip.core import hpai
 
 
-def encode(state: 'knx_stack.State', msg: 'knx_stack.knxnet_ip.core.disconnect.req.Msg') -> 'knx_stack.Msg':
+def encode(
+    state: "knx_stack.State", msg: "knx_stack.knxnet_ip.core.disconnect.req.Msg"
+) -> "knx_stack.Msg":
     """
     >>> import knx_stack
     >>> state = knx_stack.knxnet_ip.State(knx_stack.Medium.knxnet_ip, None, None)

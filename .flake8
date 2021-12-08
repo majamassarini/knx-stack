@@ -1,0 +1,16 @@
+[flake8]
+# postponed evaluation of annotations seems not being working
+# black will fix it, then fix it
+ignore = F821,BLK100
+
+# line break before binary operator - introduced by black (W503)
+# E203 whitespace before ':' - introduced by black (E203)
+# doctests are not well formatted, lines are too long and are not fixed by black, ignore them (W501)
+# W505 doc line too long - doctests results are too long end exceed doc line length, ignore them (W505)
+extend-ignore = W503,E203,E501,W505
+
+# black setting is 88
+max-line-length = 88
+max-doc-length = 120
+
+per-file-ignores = __init__.py:F401,E402

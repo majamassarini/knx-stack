@@ -1,12 +1,19 @@
 import socket
 
 from knx_stack import Octect, Short
-from knx_stack.definition.knxnet_ip import Msg as NetMsg, Services, ConnectionTypes, HEADER_SIZE_10
+from knx_stack.definition.knxnet_ip import (
+    Msg as NetMsg,
+    Services,
+    ConnectionTypes,
+    HEADER_SIZE_10,
+)
 from knx_stack.encode.knxnet_ip import header
 from knx_stack.encode.knxnet_ip.core import hpai
 
 
-def encode(state: 'knx_stack.State', msg: 'knx_stack.knxnet_ip.core.connect.req.Msg') -> 'knx_stack.Msg':
+def encode(
+    state: "knx_stack.State", msg: "knx_stack.knxnet_ip.core.connect.req.Msg"
+) -> "knx_stack.Msg":
     """
     Build the host protocol address information: HPAI and services related header bytes
     >>> import knx_stack

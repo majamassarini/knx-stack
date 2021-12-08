@@ -6,4 +6,3 @@ from knx_stack.decode.layer.transport import t_data_individual
 from knx_stack.decode.layer.transport import t_data_system_broadcast
 from knx_stack.decode.layer.transport import t_data_tag_group
 from knx_stack.decode.layer.transport import t_disconnect
-

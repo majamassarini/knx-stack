@@ -2,13 +2,18 @@ from knx_stack.encode.layer.transport.t_data_group import ind
 from knx_stack.encode.layer.application.a_group_value_write.encode import al_encode
 
 
-def encode(state: 'knx_stack.State', msg: 'knx_stack.layer.application.a_group_value_write.ind.Msg') -> 'knx_stack.Msg':
+def encode(
+    state: "knx_stack.State",
+    msg: "knx_stack.layer.application.a_group_value_write.ind.Msg",
+) -> "knx_stack.Msg":
     """
     >>> import knx_stack
     >>> address_table = knx_stack.AddressTable(0x0001, [], 255)
     >>> association_table = knx_stack.AssociationTable(address_table, {})
     >>> new_association_table = association_table.associate(0x0002, 1)
-    >>> state = knx_stack.State(knx_stack.Medium.usb_hid, new_association_table, {1: knx_stack.datapointtypes.DPT_Switch})
+    >>> state = knx_stack.State(knx_stack.Medium.usb_hid,
+    ...                         new_association_table,
+    ...                         {1: knx_stack.datapointtypes.DPT_Switch})
     >>> switch = knx_stack.datapointtypes.DPT_Switch()
     >>> switch.bits.action = knx_stack.datapointtypes.DPT_Switch.Action.on
     >>> ind_msg = knx_stack.layer.application.a_group_value_write.ind.Msg(asap=1, dpt=switch)

@@ -55,7 +55,13 @@ class Client(object):
                 client.run()
     """
 
-    def __init__(self, ip: str, port: int, state: 'knx_stack.State', send_msgs: Iterable[NamedTuple]):
+    def __init__(
+        self,
+        ip: str,
+        port: int,
+        state: "knx_stack.State",
+        send_msgs: Iterable[NamedTuple],
+    ):
         self._ip = ip
         self._port = port
         self._state = state
@@ -72,7 +78,7 @@ class Client(object):
     async def _knx_write(self, msgs):
         for msg in msgs:
             octect_msg = knx_stack.encode_msg(self._state, msg)
-            self._write(str(octect_msg) + '\n')
+            self._write(str(octect_msg) + "\n")
             self.logger.error("written {}".format(msg))
             await asyncio.sleep(3)
         self.loop.stop()
@@ -108,26 +114,42 @@ if __name__ == "__main__":
     asap_device = knx_stack.ASAP(1, "a floor light switch device")
     asap_command = knx_stack.ASAP(2, "turn on/off floor light")
     association_table.associate(asap_device, [knx_stack.Address(0x1029)])
-    association_table.associate(asap_command, [knx_stack.GroupAddress(free_style=0x0F81)])
-    state = knx_stack.State(knx_stack.Medium.usb_hid, association_table,
-                            knx_stack.GroupObjectTable({asap_command: knx_stack.datapointtypes.DPT_Switch}))
+    association_table.associate(
+        asap_command, [knx_stack.GroupAddress(free_style=0x0F81)]
+    )
+    state = knx_stack.State(
+        knx_stack.Medium.usb_hid,
+        association_table,
+        knx_stack.GroupObjectTable({asap_command: knx_stack.datapointtypes.DPT_Switch}),
+    )
 
     msgs = list()
 
     switch_on = knx_stack.datapointtypes.DPT_Switch()
     switch_on.bits.action = knx_stack.datapointtypes.DPT_Switch.Action.on
-    msgs.append(knx_stack.layer.application.a_group_value_write.req.Msg(asap=asap_command, dpt=switch_on))
+    msgs.append(
+        knx_stack.layer.application.a_group_value_write.req.Msg(
+            asap=asap_command, dpt=switch_on
+        )
+    )
 
     switch_off = knx_stack.datapointtypes.DPT_Switch()
     switch_off.bits.action = knx_stack.datapointtypes.DPT_Switch.Action.off
-    msgs.append(knx_stack.layer.application.a_group_value_write.req.Msg(asap=asap_command, dpt=switch_off))
+    msgs.append(
+        knx_stack.layer.application.a_group_value_write.req.Msg(
+            asap=asap_command, dpt=switch_off
+        )
+    )
 
-    msgs.append(knx_stack.layer.application.a_property_value_read.req.Msg(asap=0,
-                                                                          object_index=0x01,
-                                                                          property_id=0xC9,
-                                                                          number_of_elements=1,
-                                                                          start_index=0x01))
+    msgs.append(
+        knx_stack.layer.application.a_property_value_read.req.Msg(
+            asap=0,
+            object_index=0x01,
+            property_id=0xC9,
+            number_of_elements=1,
+            start_index=0x01,
+        )
+    )
 
-    client = Client('172.31.11.251', 5555, state, msgs)
+    client = Client("172.31.11.251", 5555, state, msgs)
     client.run()
-

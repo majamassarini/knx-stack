@@ -4,7 +4,7 @@ import socket
 from knx_stack.definition.knxnet_ip.core.search.res import Msg
 
 
-def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
+def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
     """
     >>> import knx_stack
     >>> example = knx_stack.Msg.make_from_str("004c0801ac1f0afa0e5736010200ffff00000001001e9a2e00000000000e8c000a8a495020496e74657266616365204e313438000000000000000000000000000802020103010401")
@@ -24,7 +24,11 @@ def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
     (knx_medium, body) = body.octect()
     (device_status, body) = body.octect()
     (individual_address, body) = body.short()
-    result.append(Msg(ip=socket.inet_ntoa(struct.pack('!I', ip.value)),
-                      port=port.value,
-                      individual_address=individual_address))
+    result.append(
+        Msg(
+            ip=socket.inet_ntoa(struct.pack("!I", ip.value)),
+            port=port.value,
+            individual_address=individual_address,
+        )
+    )
     return result

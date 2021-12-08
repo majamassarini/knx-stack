@@ -2,7 +2,7 @@ from typing import NamedTuple
 
 
 class Msg(NamedTuple):
-    asap: 'knx_stack.ASAP'
+    asap: "knx_stack.ASAP"
     object_index: int
     property_id: int
     number_of_elements: int
@@ -10,10 +10,14 @@ class Msg(NamedTuple):
     data: str
 
     def __repr__(self):
-        return "PropertyValueResponseInd {} (object index {}, property id {}, number of elements {}, " \
-               "start index {} for asap {})".format(self.data,
-                                                    self.object_index,
-                                                    self.property_id,
-                                                    self.number_of_elements,
-                                                    self.start_index,
-                                                    self.asap)
+        return (
+            "PropertyValueResponseInd {} (object index {}, property id {}, number of elements {}, "
+            "start index {} for asap {})".format(
+                self.data,
+                self.object_index,
+                self.property_id,
+                self.number_of_elements,
+                self.start_index,
+                self.asap,
+            )
+        )

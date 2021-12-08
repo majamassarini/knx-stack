@@ -54,61 +54,59 @@ class NSDU(IntEnum):
 
 class _Cntrl1(LittleEndianStructure):
 
-    _fields_ = [('confirm_flag', c_uint8, 1),
-                ('acknowledge_request_flag', c_uint8, 1),
-                ('priority', c_uint8, 2),
-                ('system_broadcast', c_uint8, 1),
-                ('repeat_flag', c_uint8, 1),
-                ('padding', c_uint8, 1),
-                ('frame_type_flag', c_uint8, 1)
-                ]
+    _fields_ = [
+        ("confirm_flag", c_uint8, 1),
+        ("acknowledge_request_flag", c_uint8, 1),
+        ("priority", c_uint8, 2),
+        ("system_broadcast", c_uint8, 1),
+        ("repeat_flag", c_uint8, 1),
+        ("padding", c_uint8, 1),
+        ("frame_type_flag", c_uint8, 1),
+    ]
 
 
 class Cntrl1(Union):
 
-    _fields_ = [('bits', _Cntrl1),
-                ('value', c_uint8)]
+    _fields_ = [("bits", _Cntrl1), ("value", c_uint8)]
 
 
 class _Cntrl2(LittleEndianStructure):
 
-    _fields_ = [('extended_frame_format', c_uint8, 4),
-                ('hop_count', c_uint8, 3),
-                ('address_type', c_uint8, 1),
-                ]
+    _fields_ = [
+        ("extended_frame_format", c_uint8, 4),
+        ("hop_count", c_uint8, 3),
+        ("address_type", c_uint8, 1),
+    ]
 
 
 class Cntrl2(Union):
 
-    _fields_ = [('bits', _Cntrl2),
-                ('value', c_uint8)]
+    _fields_ = [("bits", _Cntrl2), ("value", c_uint8)]
 
 
 class _TPCI(LittleEndianStructure):
 
-    _fields_ = [('ack_nack', c_uint8, 2),
-                ('sequence_number', c_uint8, 4),
-                ('numbered', c_uint8, 1),
-                ('control_flag', c_uint8, 1),
-                ]
+    _fields_ = [
+        ("ack_nack", c_uint8, 2),
+        ("sequence_number", c_uint8, 4),
+        ("numbered", c_uint8, 1),
+        ("control_flag", c_uint8, 1),
+    ]
 
 
 class TPCI(Union):
 
-    _fields_ = [('bits', _TPCI),
-                ('value', c_uint8)]
+    _fields_ = [("bits", _TPCI), ("value", c_uint8)]
 
 
 class _APCI(LittleEndianStructure):
 
-    _fields_ = [('data', c_uint8, 6),
-                ('apci', c_uint8, 2)]
+    _fields_ = [("data", c_uint8, 6), ("apci", c_uint8, 2)]
 
 
 class APCI(Union):
 
-    _fields_ = [('bits', _APCI),
-                ('value', c_uint8)]
+    _fields_ = [("bits", _APCI), ("value", c_uint8)]
 
 
 class L_Data(LittleEndianStructure):
@@ -143,14 +141,15 @@ class L_Data(LittleEndianStructure):
 
         self._cntrl2.bits.hop_count = 6
 
-    _fields_ = [('_apci', APCI),
-                ('_tpci', TPCI),
-                ('_npdu_length', c_uint8),
-                ('_destination', c_uint16),
-                ('_source', c_uint16),
-                ('_cntrl2', Cntrl2),
-                ('_cntrl1', Cntrl1),
-                ]
+    _fields_ = [
+        ("_apci", APCI),
+        ("_tpci", TPCI),
+        ("_npdu_length", c_uint8),
+        ("_destination", c_uint16),
+        ("_source", c_uint16),
+        ("_cntrl2", Cntrl2),
+        ("_cntrl1", Cntrl1),
+    ]
 
     @property
     def source(self):
@@ -222,58 +221,77 @@ class L_Data(LittleEndianStructure):
     @property
     def nsdu(self):
         pdu = None
-        if (self._cntrl2.bits.address_type == AddressType.group and
-            self._tpci.bits.control_flag == 0 and
-            self._tpci.bits.numbered == 0 and
-            self._tpci.bits.sequence_number == 0 and
-            self._destination == 0):
+        if (
+            self._cntrl2.bits.address_type == AddressType.group
+            and self._tpci.bits.control_flag == 0
+            and self._tpci.bits.numbered == 0
+            and self._tpci.bits.sequence_number == 0
+            and self._destination == 0
+        ):
             pdu = NSDU.T_Data_Broadcast_PDU
-        elif (self._cntrl2.bits.address_type == AddressType.group and
-              self._tpci.bits.control_flag == 0 and
-              self._tpci.bits.numbered == 0 and
-              self._tpci.bits.sequence_number == 0 and
-              self._destination != 0):
+        elif (
+            self._cntrl2.bits.address_type == AddressType.group
+            and self._tpci.bits.control_flag == 0
+            and self._tpci.bits.numbered == 0
+            and self._tpci.bits.sequence_number == 0
+            and self._destination != 0
+        ):
             pdu = NSDU.T_Data_Group_PDU
-        elif (self._cntrl2.bits.address_type == AddressType.group and
-              self._tpci.bits.control_flag == 0 and
-              self._tpci.bits.numbered == 0 and
-              self._tpci.bits.sequence_number == 1):
+        elif (
+            self._cntrl2.bits.address_type == AddressType.group
+            and self._tpci.bits.control_flag == 0
+            and self._tpci.bits.numbered == 0
+            and self._tpci.bits.sequence_number == 1
+        ):
             pdu = NSDU.T_Data_Tag_Group_PDU
-        elif (self._cntrl2.bits.address_type == AddressType.individual and
-              self._tpci.bits.control_flag == 0 and
-              self._tpci.bits.numbered == 0 and
-              self._tpci.bits.sequence_number == 0):
+        elif (
+            self._cntrl2.bits.address_type == AddressType.individual
+            and self._tpci.bits.control_flag == 0
+            and self._tpci.bits.numbered == 0
+            and self._tpci.bits.sequence_number == 0
+        ):
             pdu = NSDU.T_Data_Individual_PDU
-        elif (self._cntrl2.bits.address_type == AddressType.individual and
-              self._tpci.bits.control_flag == 0 and
-              self._tpci.bits.numbered == 1):
+        elif (
+            self._cntrl2.bits.address_type == AddressType.individual
+            and self._tpci.bits.control_flag == 0
+            and self._tpci.bits.numbered == 1
+        ):
             pdu = NSDU.T_Data_Connected_PDU
-        elif (self._cntrl2.bits.address_type == AddressType.individual and
-              self._tpci.bits.control_flag == 1 and
-              self._tpci.bits.numbered == 0):
+        elif (
+            self._cntrl2.bits.address_type == AddressType.individual
+            and self._tpci.bits.control_flag == 1
+            and self._tpci.bits.numbered == 0
+        ):
             pdu = NSDU.T_Data_Connected_PDU
-        elif (self._cntrl2.bits.address_type == AddressType.individual and
-              self._tpci.bits.control_flag == 1 and
-              self._tpci.bits.numbered == 0 and
-              self._tpci.bits.ack_nack == 0):
+        elif (
+            self._cntrl2.bits.address_type == AddressType.individual
+            and self._tpci.bits.control_flag == 1
+            and self._tpci.bits.numbered == 0
+            and self._tpci.bits.ack_nack == 0
+        ):
             pdu = NSDU.T_Connect_PDU
-        elif (self._cntrl2.bits.address_type == AddressType.individual and
-              self._tpci.bits.control_flag == 1 and
-              self._tpci.bits.numbered == 0 and
-              self._tpci.bits.ack_nack == 1):
+        elif (
+            self._cntrl2.bits.address_type == AddressType.individual
+            and self._tpci.bits.control_flag == 1
+            and self._tpci.bits.numbered == 0
+            and self._tpci.bits.ack_nack == 1
+        ):
             pdu = NSDU.T_Disconnect_PDU
-        elif (self._cntrl2.bits.address_type == AddressType.individual and
-              self._tpci.bits.control_flag == 1 and
-              self._tpci.bits.numbered == 1 and
-              self._tpci.bits.ack_nack == 2):
+        elif (
+            self._cntrl2.bits.address_type == AddressType.individual
+            and self._tpci.bits.control_flag == 1
+            and self._tpci.bits.numbered == 1
+            and self._tpci.bits.ack_nack == 2
+        ):
             pdu = NSDU.T_ACK_PDU
-        elif (self._cntrl2.bits.address_type == AddressType.individual and
-              self._tpci.bits.control_flag == 1 and
-              self._tpci.bits.numbered == 1 and
-              self._tpci.bits.ack_nack == 3):
-            pdu = NSDU.T_NACK_PDU  
+        elif (
+            self._cntrl2.bits.address_type == AddressType.individual
+            and self._tpci.bits.control_flag == 1
+            and self._tpci.bits.numbered == 1
+            and self._tpci.bits.ack_nack == 3
+        ):
+            pdu = NSDU.T_NACK_PDU
         return pdu
-
 
     @nsdu.setter
     def nsdu(self, pdu):
@@ -325,7 +343,6 @@ class L_Data(LittleEndianStructure):
             self._tpci.bits.numbered = 1
             self._tpci.bits.ack_nack = 3
 
-
     @staticmethod
     def make_from(msg):
         l_data = L_Data()
@@ -352,11 +369,11 @@ class L_Data(LittleEndianStructure):
         return l_data, new_msg
 
     def __repr__(self, *args, **kwargs):
-        s = ("""source: %d (0x%04X), destination: %d (0x%04X), address_type: %s""" %
-             (self.source,
-              self.source,
-              self.destination,
-              self.destination,
-              self.address_type, 
-              ))
-        return s    
+        s = """source: %d (0x%04X), destination: %d (0x%04X), address_type: %s""" % (
+            self.source,
+            self.source,
+            self.destination,
+            self.destination,
+            self.address_type,
+        )
+        return s

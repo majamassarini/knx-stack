@@ -30,8 +30,8 @@ class State:
     >>> address_table = knx_stack.AddressTable(knx_stack.Address(4097),
     ...                                              [knx_stack.GroupAddress(free_style=2)], 255)
     >>> association_table = knx_stack.AssociationTable(address_table,
-    ...                                                      [knx_stack.layer.Association(address=knx_stack.GroupAddress(free_style=0x002),
-    ...                                                                                   asap=knx_stack.ASAP(1))])
+    ...                         [knx_stack.layer.Association(address=knx_stack.GroupAddress(free_style=0x002),
+    ...                                                      asap=knx_stack.ASAP(1))])
     >>> state = knx_stack.State(knx_stack.Medium.tp, association_table,
     ...                         knx_stack.GroupObjectTable({knx_stack.ASAP(1): knx_stack.datapointtypes.DPT_Switch}))
     >>> s = "BCE000010002010080"
@@ -54,10 +54,12 @@ class State:
     <class 'knx_stack.datapointtypes.DPT_Switch'>
     """
 
-    def __init__(self,
-                 medium: 'knx_stack.Medium',
-                 association_table: 'knx_stack.AssociationTable',
-                 groupobject_table: 'knx_stack.GroupObjectTable'):
+    def __init__(
+        self,
+        medium: "knx_stack.Medium",
+        association_table: "knx_stack.AssociationTable",
+        groupobject_table: "knx_stack.GroupObjectTable",
+    ):
         self._association_table = association_table
         self._groupobject_table = groupobject_table
         self._medium = medium
@@ -71,18 +73,23 @@ class State:
         self._sequence_counter_local = 0
 
     def __repr__(self, *args, **kwargs):
-        s = (""" State for %s\n
+        s = """ State for %s\n
         %s\n
         %s\n
         LData structure (for decode functions): %s\n
         ASAP: %s, APCI: %s, Address Type: %s\n
         Sequence Counter (remote): %s\n
-        Sequence Counter (local): %s\n""" % (self.medium,
-                                             self.association_table,
-                                             self.datapointtypes, self.ldata,
-                                             self.asap, self.apci, self.address_type,
-                                             self.sequence_counter_remote,
-                                             self.sequence_counter_local))
+        Sequence Counter (local): %s\n""" % (
+            self.medium,
+            self.association_table,
+            self.datapointtypes,
+            self.ldata,
+            self.asap,
+            self.apci,
+            self.address_type,
+            self.sequence_counter_remote,
+            self.sequence_counter_local,
+        )
         return s
 
     @property
@@ -158,8 +165,11 @@ class State:
 
     def get_asaps_and_dpts(self):
         asaps = set(self.get_asaps())
-        associations = [(asap, dpt) for asap, dpt in self._groupobject_table.associations
-                        if asap in asaps]
+        associations = [
+            (asap, dpt)
+            for asap, dpt in self._groupobject_table.associations
+            if asap in asaps
+        ]
         return associations
 
     def get_tsaps(self):

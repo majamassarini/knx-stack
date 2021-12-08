@@ -3,7 +3,7 @@ from knx_stack.definition.usb_hid import KNX_DATA_EXCHANGE
 from knx_stack.decode.usb_hid.report_header import packet_info
 
 
-def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[NamedTuple]:
+def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTuple]:
     """
     >>> import knx_stack
     >>> individual_address = knx_stack.Address(0x0001)

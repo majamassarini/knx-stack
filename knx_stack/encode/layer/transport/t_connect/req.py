@@ -4,7 +4,7 @@ from knx_stack.definition import layer
 from knx_stack.encode.layer.network.n_data_individual import req
 
 
-def encode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> 'knx_stack.Msg':
+def encode(state: "knx_stack.State", msg: "knx_stack.Msg") -> "knx_stack.Msg":
     """
     >>> import knx_stack
     >>> from knx_stack.encode.layer.transport.t_connect.req import encode

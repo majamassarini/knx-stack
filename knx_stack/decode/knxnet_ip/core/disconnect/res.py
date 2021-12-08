@@ -3,7 +3,7 @@ from knx_stack.definition.knxnet_ip import ErrorCodes
 from knx_stack.definition.knxnet_ip.core.disconnect.res import Msg
 
 
-def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
+def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
     """
     >>> import knx_stack
     >>> from knx_stack.decode.knxnet_ip.core.disconnect.res import decode
@@ -19,6 +19,10 @@ def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
     (status, body) = body.octect()
     if status.value == ErrorCodes.E_NO_ERROR:
         state.communication_channel_id = 0
-        result.append(Msg(communication_channel_id=communication_channel_id.value,
-                          status=ErrorCodes(status.value)))
+        result.append(
+            Msg(
+                communication_channel_id=communication_channel_id.value,
+                status=ErrorCodes(status.value),
+            )
+        )
     return result

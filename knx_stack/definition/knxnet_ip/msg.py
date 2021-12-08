@@ -6,7 +6,6 @@ from knx_stack.address import Address
 
 
 class Msg(Parent):
-
     def HPAI(self):
         """
         Host protocol address information
@@ -16,9 +15,7 @@ class Msg(Parent):
             (ipv4_udp, body) = body.octect()
             (ip, body) = body.long()
             (port, body) = body.short()
-            return (socket.inet_ntoa(struct.pack('!I', ip.value)),
-                    port.value,
-                    body)
+            return (socket.inet_ntoa(struct.pack("!I", ip.value)), port.value, body)
         else:
             raise TypeError("No HPAI message")
 
@@ -49,4 +46,9 @@ class Msg(Parent):
         (communication_channel_id, body) = body.octect()
         (sequence_counter, body) = body.octect()
         (status, body) = body.octect()
-        return communication_channel_id.value, sequence_counter.value, status.value, body
+        return (
+            communication_channel_id.value,
+            sequence_counter.value,
+            status.value,
+            body,
+        )

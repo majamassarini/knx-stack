@@ -2,7 +2,7 @@ from typing import Iterable
 
 
 class AddressTableException(Exception):
-    """ Max entries already written inside address table """
+    """Max entries already written inside address table"""
 
 
 class AddressTable(object):
@@ -74,7 +74,12 @@ class AddressTable(object):
     <BLANKLINE>
     """
 
-    def __init__(self, ia: 'knx_stack.Address', addresses: Iterable['knx_stack.GroupAddress'], max_size: int):
+    def __init__(
+        self,
+        ia: "knx_stack.Address",
+        addresses: Iterable["knx_stack.GroupAddress"],
+        max_size: int,
+    ):
         """
         :param ia: an *individual address*
         :param addresses: a list of *group addresses*
@@ -86,32 +91,32 @@ class AddressTable(object):
         self._group_addresses.sort(key=lambda group_address: group_address.free_style)
 
     @property
-    def individual_address(self) -> 'knx_stack.Address':
+    def individual_address(self) -> "knx_stack.Address":
         return self._individual_address
 
     @individual_address.setter
-    def individual_address(self, ia: 'knx_stack.Address'):
+    def individual_address(self, ia: "knx_stack.Address"):
         self._individual_address = ia
 
     @property
     def max_size(self) -> int:
-        return self._max_size   
-    
+        return self._max_size
+
     @property
     def tsaps(self) -> Iterable[int]:
         return [tsap for tsap in range(0, (len(self._group_addresses) + 1))]
 
     @property
-    def addresses(self) -> Iterable['knx_stack.GroupAddress']:
+    def addresses(self) -> Iterable["knx_stack.GroupAddress"]:
         return self._group_addresses
 
     def get_address(self, tsap: int) -> int:
         if tsap >= 1:
-            return self._group_addresses[tsap-1]
+            return self._group_addresses[tsap - 1]
         else:
             return self._individual_address
 
-    def get_tsap(self, address: 'knx_stack.GroupAddress') -> int:
+    def get_tsap(self, address: "knx_stack.GroupAddress") -> int:
         try:
             return self._group_addresses.index(address) + 1
         except ValueError:
@@ -120,7 +125,7 @@ class AddressTable(object):
             else:
                 return None
 
-    def add(self, address: 'knx_stack.Address') -> 'knx_stack.AddressTable':
+    def add(self, address: "knx_stack.Address") -> "knx_stack.AddressTable":
         """
         Returns a new *Address Table* containing the given *group address*
 
@@ -129,14 +134,19 @@ class AddressTable(object):
         """
         if address not in self._group_addresses or address != self._individual_address:
             if len(self._group_addresses) >= self.max_size:
-                raise AddressTableException("Max entries %d, already written inside address table" % self.max_size)
+                raise AddressTableException(
+                    "Max entries %d, already written inside address table"
+                    % self.max_size
+                )
             self._group_addresses.append(address)
             try:
-                self._group_addresses.sort(key=lambda group_address: group_address.free_style)
+                self._group_addresses.sort(
+                    key=lambda group_address: group_address.free_style
+                )
             except AttributeError as e:
                 raise e
 
-    def remove(self, address: 'knx_stack.GroupAddress') -> 'knx_stack.AddressTable':
+    def remove(self, address: "knx_stack.GroupAddress") -> "knx_stack.AddressTable":
         """
         Returns a new *Address Table* without the given *group address*
 
@@ -147,13 +157,14 @@ class AddressTable(object):
         self._group_addresses.sort(key=lambda group_address: group_address.free_style)
 
     def __repr__(self, *args, **kwargs):
-        s = ("""AddressTable: individual address: {}, max_size={}\n\n""".format(self.individual_address,
-                                                                                   self.max_size))
+        s = """AddressTable: individual address: {}, max_size={}\n\n""".format(
+            self.individual_address, self.max_size
+        )
 
         s += """    tsap -> individual address\n"""
         s += """    0 -> {}\n""".format(self.individual_address)
         s += """    tsap -> group address (hex_free_style two_level_style three_level_style)\n"""
         for tsap, address in enumerate(self._group_addresses):
-            s += """    {} -> {}\n""".format((tsap+1), address)
-            
+            s += """    {} -> {}\n""".format((tsap + 1), address)
+
         return s

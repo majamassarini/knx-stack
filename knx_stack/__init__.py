@@ -9,7 +9,9 @@ from knx_stack.definition.layer.transport import ASAP, Association, AssociationT
 from knx_stack.definition.layer.application import GroupObjectTable
 from knx_stack import encode
 from knx_stack import decode
-from knx_stack.decode.usb_hid.report_header.report_identifier import decode as usb_hid_decode
+from knx_stack.decode.usb_hid.report_header.report_identifier import (
+    decode as usb_hid_decode,
+)
 from knx_stack.decode.knxnet_ip.header import decode as knxnet_ip_decode
 from knx_stack import client
 
@@ -39,5 +41,3 @@ def decode_msg(state_, msg_):
         return decode.knxnet_ip.header.decode(state_, msg_)
     else:
         raise Exception("Not supported medium")
-
-

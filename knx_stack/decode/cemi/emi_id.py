@@ -3,7 +3,7 @@ from knx_stack.definition.cemi import EMIId
 from knx_stack.decode.cemi import msg_code
 
 
-def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[NamedTuple]:
+def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTuple]:
     result = []
     (head, msg) = msg.octect()
     if head.value == EMIId.commonEmi:

@@ -4,7 +4,7 @@ from knx_stack.definition.knxnet_ip.tunneling.ack import Msg
 from knx_stack.definition.knxnet_ip import ErrorCodes
 
 
-def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
+def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
     """
     >>> import knx_stack
     >>> address_table = knx_stack.AddressTable(0x0001, [], 255)
@@ -19,5 +19,9 @@ def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
     (communication_channel_id, sequence_counter, status, body) = body.header()
     if state.sequence_counter_local == sequence_counter:
         state.sequence_counter_local += 1
-    logging.getLogger(__name__).info("knxnet_ip.tunneling.decode.req sequence counter={}".format(sequence_counter))
-    return [Msg(sequence_counter=state.sequence_counter_local, status=ErrorCodes(status))], state
+    logging.getLogger(__name__).info(
+        "knxnet_ip.tunneling.decode.req sequence counter={}".format(sequence_counter)
+    )
+    return [
+        Msg(sequence_counter=state.sequence_counter_local, status=ErrorCodes(status))
+    ], state

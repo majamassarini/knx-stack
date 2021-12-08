@@ -30,10 +30,12 @@ class GroupObjectTable:
     def associations(self):
         return self._associations.items()
 
-    def associate(self, asap: 'knx_stack.ASAP', datapointtype: 'knx_stack.datapointtypes.DPT'):
+    def associate(
+        self, asap: "knx_stack.ASAP", datapointtype: "knx_stack.datapointtypes.DPT"
+    ):
         self._associations[asap] = datapointtype
 
-    def disassociate(self, asap: 'knx_stack.ASAP'):
+    def disassociate(self, asap: "knx_stack.ASAP"):
         del self._associations[asap]
 
     def __repr__(self, *args, **kwargs):

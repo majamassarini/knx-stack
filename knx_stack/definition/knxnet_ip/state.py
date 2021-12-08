@@ -2,7 +2,6 @@ import knx_stack.state
 
 
 class State(knx_stack.state.State):
-
     def __init__(self, medium, association_table=None, datapointtypes=None):
         super(State, self).__init__(medium, association_table, datapointtypes)
         self._communication_channel_id = 0

@@ -1,2 +1,1 @@
 KNX_DATA_EXCHANGE = 0x01
-

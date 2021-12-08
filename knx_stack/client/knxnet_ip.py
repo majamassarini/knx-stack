@@ -39,7 +39,8 @@ class Tunneling(asyncio.DatagramProtocol):
                 asap_command = knx_stack.ASAP(1, "turn on/off floor light")
                 association_table.associate(asap_command, [knx_stack.GroupAddress(free_style=0x0F81)])
                 state = knx_stack.knxnet_ip.State(knx_stack.Medium.knxnet_ip, association_table,
-                                                  knx_stack.GroupObjectTable({asap_command: knx_stack.datapointtypes.DPT_Switch}))
+                                                  knx_stack.GroupObjectTable(
+                                                  {asap_command: knx_stack.datapointtypes.DPT_Switch}))
 
                 msgs = list()
 
@@ -52,16 +53,27 @@ class Tunneling(asyncio.DatagramProtocol):
                 msgs.append(knx_stack.layer.application.a_group_value_write.req.Msg(asap=asap_command, dpt=switch_off))
 
                 loop = asyncio.get_event_loop()
-                transport, protocol = loop.run_until_complete(loop.create_task(start_tunneling('172.31.10.111', 5544, '172.31.10.250', 3671,
-                                                                                               state, msgs)))
+                transport, protocol = loop.run_until_complete(loop.create_task(start_tunneling('172.31.10.111',
+                                                                                               5544,
+                                                                                               '172.31.10.250',
+                                                                                               3671,
+                                                                                               state,
+                                                                                               msgs)))
                 loop.run_until_complete(loop.create_task(protocol.writer()))
 
                 transport.close()
 
     """
 
-    def __init__(self, local_addr: str, local_port: int, remote_addr: str, remote_port: int,
-                 state: knx_stack.State, msgs: Iterable[NamedTuple]):
+    def __init__(
+        self,
+        local_addr: str,
+        local_port: int,
+        remote_addr: str,
+        remote_port: int,
+        state: knx_stack.State,
+        msgs: Iterable[NamedTuple],
+    ):
         self._transport = None
         self._local_addr = local_addr
         self._local_port = local_port
@@ -77,10 +89,12 @@ class Tunneling(asyncio.DatagramProtocol):
         self._transport = transport
         self.logger.info("Connection made: {}".format(str(self._transport)))
 
-        connect_msg = knx_stack.knxnet_ip.core.connect.req.Msg(addr_control_endpoint=self._local_addr,
-                                                               port_control_endpoint=self._local_port,
-                                                               addr_data_endpoint=self._local_addr,
-                                                               port_data_endpoint=self._local_port)
+        connect_msg = knx_stack.knxnet_ip.core.connect.req.Msg(
+            addr_control_endpoint=self._local_addr,
+            port_control_endpoint=self._local_port,
+            addr_data_endpoint=self._local_addr,
+            port_data_endpoint=self._local_port,
+        )
         msg = knx_stack.encode_msg(self._state, connect_msg)
         self.send(msg)
 
@@ -92,17 +106,21 @@ class Tunneling(asyncio.DatagramProtocol):
         self.logger.error("Error received: {}".format(str(exc)))
 
     def send(self, msg):
-        self._transport.sendto(bytearray.fromhex(str(msg)), (self._remote_addr, self._remote_port))
+        self._transport.sendto(
+            bytearray.fromhex(str(msg)), (self._remote_addr, self._remote_port)
+        )
 
     def datagram_received(self, data, addr):
-        responses = knx_stack.decode_msg(self._state,
-                                         knx_stack.knxnet_ip.Msg.make_from_str(data.hex()))
+        responses = knx_stack.decode_msg(
+            self._state, knx_stack.knxnet_ip.Msg.make_from_str(data.hex())
+        )
         for res in responses:
             if isinstance(res, knx_stack.knxnet_ip.core.connect.res.Msg):
                 self._state.sequence_counter_remote = 0
                 connectionstate_msg = knx_stack.knxnet_ip.core.connectionstate.req.Msg(
                     addr_control_endpoint=self._local_addr,
-                    port_control_endpoint=self._local_port)
+                    port_control_endpoint=self._local_port,
+                )
                 msg = knx_stack.encode_msg(self._state, connectionstate_msg)
                 self.send(msg)
                 self.connected = True
@@ -110,8 +128,9 @@ class Tunneling(asyncio.DatagramProtocol):
             if isinstance(res, knx_stack.knxnet_ip.tunneling.req.Msg):
                 self.logger.info("read {}".format(res))
                 if res.status == knx_stack.knxnet_ip.ErrorCodes.E_NO_ERROR:
-                    tunneling_msg = knx_stack.knxnet_ip.tunneling.ack.Msg(sequence_counter=res.sequence_counter,
-                                                                          status=res.status)
+                    tunneling_msg = knx_stack.knxnet_ip.tunneling.ack.Msg(
+                        sequence_counter=res.sequence_counter, status=res.status
+                    )
                     msg = knx_stack.encode_msg(self._state, tunneling_msg)
                     self.send(msg)
 
@@ -126,16 +145,25 @@ class Tunneling(asyncio.DatagramProtocol):
         asyncio.get_event_loop().stop()
 
 
-async def start_tunneling(local_addr: str, local_port: int, remote_addr: str, remote_port: int,
-                          state: knx_stack.knxnet_ip.State, msgs: Iterable[NamedTuple]):
+async def start_tunneling(
+    local_addr: str,
+    local_port: int,
+    remote_addr: str,
+    remote_port: int,
+    state: knx_stack.knxnet_ip.State,
+    msgs: Iterable[NamedTuple],
+):
     transport, protocol = await loop.create_datagram_endpoint(
-            lambda: Tunneling(local_addr, local_port, remote_addr, remote_port, state, msgs),
-            local_addr=(local_addr, local_port),
-            remote_addr=(remote_addr, remote_port))
+        lambda: Tunneling(
+            local_addr, local_port, remote_addr, remote_port, state, msgs
+        ),
+        local_addr=(local_addr, local_port),
+        remote_addr=(remote_addr, remote_port),
+    )
     return transport, protocol
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
 
     root = logging.getLogger()
@@ -146,24 +174,39 @@ if __name__ == '__main__':
     address_table = knx_stack.AddressTable(knx_stack.Address(0x1004), [], 255)
     association_table = knx_stack.AssociationTable(address_table, {})
     asap_command = knx_stack.ASAP(1, "turn on/off floor light")
-    association_table.associate(asap_command, [knx_stack.GroupAddress(free_style=0x0F81)])
-    state = knx_stack.knxnet_ip.State(knx_stack.Medium.knxnet_ip, association_table,
-                                      knx_stack.GroupObjectTable({asap_command: knx_stack.datapointtypes.DPT_Switch}))
+    association_table.associate(
+        asap_command, [knx_stack.GroupAddress(free_style=0x0F81)]
+    )
+    state = knx_stack.knxnet_ip.State(
+        knx_stack.Medium.knxnet_ip,
+        association_table,
+        knx_stack.GroupObjectTable({asap_command: knx_stack.datapointtypes.DPT_Switch}),
+    )
 
     msgs = list()
 
     switch_on = knx_stack.datapointtypes.DPT_Switch()
     switch_on.bits.action = knx_stack.datapointtypes.DPT_Switch.Action.on
-    msgs.append(knx_stack.layer.application.a_group_value_write.req.Msg(asap=asap_command, dpt=switch_on))
+    msgs.append(
+        knx_stack.layer.application.a_group_value_write.req.Msg(
+            asap=asap_command, dpt=switch_on
+        )
+    )
 
     switch_off = knx_stack.datapointtypes.DPT_Switch()
     switch_off.bits.action = knx_stack.datapointtypes.DPT_Switch.Action.off
-    msgs.append(knx_stack.layer.application.a_group_value_write.req.Msg(asap=asap_command, dpt=switch_off))
+    msgs.append(
+        knx_stack.layer.application.a_group_value_write.req.Msg(
+            asap=asap_command, dpt=switch_off
+        )
+    )
 
     loop = asyncio.get_event_loop()
-    transport, protocol = loop.run_until_complete(loop.create_task(start_tunneling('172.31.10.111', 5544, '172.31.10.250', 3671,
-                                                                                   state, msgs)))
+    transport, protocol = loop.run_until_complete(
+        loop.create_task(
+            start_tunneling("172.31.10.111", 5544, "172.31.10.250", 3671, state, msgs)
+        )
+    )
     loop.run_until_complete(loop.create_task(protocol.writer()))
 
     transport.close()
-

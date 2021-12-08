@@ -27,25 +27,35 @@ class Msg(list):
     """
 
     @classmethod
-    def make_from_str(cls, msg: str) -> 'knx_stack.Msg':
+    def make_from_str(cls, msg: str) -> "knx_stack.Msg":
         octects = cls.stringtooctects(msg)
         return cls(octects)
-    
+
     @staticmethod
-    def stringtooctects(msg: str) -> Iterable['knx_stack.msg.Octect']:
-        high_nibbles = [int(nibble, 16) for index, nibble in enumerate(msg) if not index % 2]
+    def stringtooctects(msg: str) -> Iterable["knx_stack.msg.Octect"]:
+        high_nibbles = [
+            int(nibble, 16) for index, nibble in enumerate(msg) if not index % 2
+        ]
         low_nibbles = [int(nibble, 16) for index, nibble in enumerate(msg) if index % 2]
-        return list(map(lambda high_nibble, low_nibble: Octect(Nibbles(high=high_nibble, low=low_nibble)), high_nibbles, low_nibbles))
-            
-    def octect(self) -> Tuple['knx_stack.msg.Octect', 'knx_stack.Msg']:
+        return list(
+            map(
+                lambda high_nibble, low_nibble: Octect(
+                    Nibbles(high=high_nibble, low=low_nibble)
+                ),
+                high_nibbles,
+                low_nibbles,
+            )
+        )
+
+    def octect(self) -> Tuple["knx_stack.msg.Octect", "knx_stack.Msg"]:
         """
         Consumes an Octect from the message's byte list
 
         :return: Tuple(Octect, the other bytes as a new Msg)
         """
         return self[0], self.__class__(self[1:])
-    
-    def short(self) -> Tuple['knx_stack.msg.Short', 'knx_stack.Msg']:
+
+    def short(self) -> Tuple["knx_stack.msg.Short", "knx_stack.Msg"]:
         """
         Consumes a Short from the message's byte list
 
@@ -56,7 +66,7 @@ class Msg(list):
         short.byte.LSB = self[1].value
         return short, self.__class__(self[2:])
 
-    def long(self) -> Tuple['knx_stack.msg.Long', 'knx_stack.Msg']:
+    def long(self) -> Tuple["knx_stack.msg.Long", "knx_stack.Msg"]:
         """
         Consumes a Long from the message's byte list
 
@@ -77,8 +87,7 @@ class Msg(list):
 
 
 class Nibbles(LittleEndianStructure):
-    _fields_ = [('low', c_uint8, 4),
-                ('high', c_uint8, 4)]
+    _fields_ = [("low", c_uint8, 4), ("high", c_uint8, 4)]
 
 
 class Octect(Union):
@@ -97,16 +106,14 @@ class Octect(Union):
     16
     """
 
-    _fields_ = [('nibble', Nibbles),
-                ('value', c_uint8)]
+    _fields_ = [("nibble", Nibbles), ("value", c_uint8)]
 
     def __repr__(self, *args, **kwargs):
         return "0x%02X" % self.value
 
 
 class Bytes(LittleEndianStructure):
-    _fields_ = [('LSB', c_uint8, 8),
-                ('MSB', c_uint8, 8)]
+    _fields_ = [("LSB", c_uint8, 8), ("MSB", c_uint8, 8)]
 
 
 class Short(Union):
@@ -129,31 +136,31 @@ class Short(Union):
     4097
     """
 
-    _fields_ = [('byte', Bytes),
-                ('value', c_uint16)]
+    _fields_ = [("byte", Bytes), ("value", c_uint16)]
 
     @property
-    def MSB(self) -> 'knx_stack.msg.Octect':
+    def MSB(self) -> "knx_stack.msg.Octect":
         return Octect(value=self.byte.MSB)
 
     @property
-    def LSB(self) -> 'knx_stack.msg.Octect':
+    def LSB(self) -> "knx_stack.msg.Octect":
         return Octect(value=self.byte.LSB)
 
     @property
-    def octects(self) -> Iterable['knx_stack.msg.Octect']:
-        return[self.MSB, self.LSB]
+    def octects(self) -> Iterable["knx_stack.msg.Octect"]:
+        return [self.MSB, self.LSB]
 
     def __repr__(self, *args, **kwargs):
         return "0x%04X" % self.value
 
 
 class LBytes(LittleEndianStructure):
-    _fields_ = [('B1', c_uint32, 8),
-                ('B2', c_uint32, 8),
-                ('B3', c_uint32, 8),
-                ('B4', c_uint32, 8),
-                ]
+    _fields_ = [
+        ("B1", c_uint32, 8),
+        ("B2", c_uint32, 8),
+        ("B3", c_uint32, 8),
+        ("B4", c_uint32, 8),
+    ]
 
 
 class Long(Union):
@@ -172,29 +179,27 @@ class Long(Union):
     0x91
     """
 
-    _fields_ = [('byte', LBytes),
-                ('value', c_uint32)]
+    _fields_ = [("byte", LBytes), ("value", c_uint32)]
 
     @property
-    def B1(self) -> 'knx_stack.msg.Octect':
+    def B1(self) -> "knx_stack.msg.Octect":
         return Octect(value=self.byte.B1)
 
     @property
-    def B2(self) -> 'knx_stack.msg.Octect':
+    def B2(self) -> "knx_stack.msg.Octect":
         return Octect(value=self.byte.B2)
 
     @property
-    def B3(self) -> 'knx_stack.msg.Octect':
+    def B3(self) -> "knx_stack.msg.Octect":
         return Octect(value=self.byte.B3)
 
     @property
-    def B4(self) -> 'knx_stack.msg.Octect':
+    def B4(self) -> "knx_stack.msg.Octect":
         return Octect(value=self.byte.B4)
 
     @property
-    def octects(self) -> Iterable['knx_stack.msg.Octect']:
+    def octects(self) -> Iterable["knx_stack.msg.Octect"]:
         return [self.B4, self.B3, self.B2, self.B1]
 
     def __repr__(self, *args, **kwargs):
         return "0x%08X" % self.value
-

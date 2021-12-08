@@ -3,7 +3,7 @@ from knx_stack.definition.layer.application.a_group_value_write.con import Msg
 from knx_stack.decode.layer.application import a_group_value
 
 
-def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
+def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
     """
     >>> import knx_stack
     >>> asap = knx_stack.ASAP(1, "example asap")
@@ -17,8 +17,8 @@ def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
     [GroupValueWriteCon status 0 (DPT_Switch {'action': 'on'} for asap 1 (example asap))]
     """
     group_values = a_group_value.decode(state, msg)
-    group_values_write = [Msg(asap=group_value.asap,
-                              dpt=group_value.dpt,
-                              status=state.ldata.status)
-                          for group_value in group_values]
+    group_values_write = [
+        Msg(asap=group_value.asap, dpt=group_value.dpt, status=state.ldata.status)
+        for group_value in group_values
+    ]
     return group_values_write

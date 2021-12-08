@@ -10,7 +10,7 @@ class Status(IntEnum):
 
 
 class Msg(NamedTuple):
-    status: 'knx_stack.knxnet_ip.core.connectionstate.Status'
+    status: "knx_stack.knxnet_ip.core.connectionstate.Status"
 
     def __repr__(self):
         return "ConnectionstateRes(status={})".format(self.status)

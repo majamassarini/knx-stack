@@ -11,7 +11,7 @@ class EMIType(NamedTuple):
     type: str
 
 
-def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[NamedTuple]:
+def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTuple]:
     (head, body) = msg.octect()
     result = []
     if head.value == FeatureId.busConnectionStatus:

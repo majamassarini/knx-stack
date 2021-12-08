@@ -4,7 +4,7 @@ from knx_stack.definition.knxnet_ip import HEADER_SIZE_10, KNXNETIP_VERSION_10, 
 from knx_stack.decode.knxnet_ip import core, tunneling
 
 
-def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[NamedTuple]:
+def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTuple]:
     """
     >>> import knx_stack
     >>> individual_address = knx_stack.Address(0x0001)
@@ -39,5 +39,7 @@ def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[NamedTupl
         elif service.value == Services.TUNNELING_ACK:
             result = tunneling.ack.decode(state, body)
         else:
-            logging.getLogger(__name__).error("Unknown knxnet_ip service value %d" % service.value)
+            logging.getLogger(__name__).error(
+                "Unknown knxnet_ip service value %d" % service.value
+            )
     return result

@@ -2,7 +2,7 @@ from typing import Iterable
 from knx_stack.definition.knxnet_ip.core.connect.res import Msg, Status
 
 
-def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
+def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
     """
     >>> import knx_stack
     >>> example = knx_stack.knxnet_ip.Msg.make_from_str("00144a000801ac1f0afa0e570404ffff")
@@ -23,8 +23,12 @@ def decode(state: 'knx_stack.State', msg: 'knx_stack.Msg') -> Iterable[Msg]:
         state.communication_channel_id = communication_channel_id.value
     else:
         individual_address = None
-    result.append(Msg(ip=ip,
-                      port=port,
-                      individual_address=individual_address,
-                      status=Status(status.value)))
+    result.append(
+        Msg(
+            ip=ip,
+            port=port,
+            individual_address=individual_address,
+            status=Status(status.value),
+        )
+    )
     return result

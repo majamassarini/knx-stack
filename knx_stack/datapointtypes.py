@@ -6,9 +6,8 @@ import decimal
 
 
 class DPT_Factory(object):
-
     @staticmethod
-    def make(dpt: str, fields_values: dict) -> 'knx_stack.datapointtypes.DPT':
+    def make(dpt: str, fields_values: dict) -> "knx_stack.datapointtypes.DPT":
         """
         Build a knx_stack.datapointtypes.DPT from a dpt name and a dictionary of values.
 
@@ -30,6 +29,7 @@ class DPT_Factory(object):
         -1.0
         """
         from knx_stack import datapointtypes
+
         dpt = getattr(datapointtypes, dpt)()
         for key, value in fields_values.items():
             if key == "decoded_value":
@@ -41,7 +41,6 @@ class DPT_Factory(object):
 
 
 class Description_Factory(object):
-
     @staticmethod
     def make(dpt):
         """
@@ -66,16 +65,23 @@ class Description_Factory(object):
         ('DPT_Value_Lux', {'decoded_value': 9999.36})
         """
         description = {}
-        fields = (set([name for name, _ in inspect.getmembers(dpt.__class__, inspect.isdatadescriptor)]) -
-                      set(['bits', 'value', '__weakref__', '_b_base_', '_b_needsfree_', '_objects']))
+        fields = set(
+            [
+                name
+                for name, _ in inspect.getmembers(
+                    dpt.__class__, inspect.isdatadescriptor
+                )
+            ]
+        ) - set(
+            ["bits", "value", "__weakref__", "_b_base_", "_b_needsfree_", "_objects"]
+        )
         for name in fields:
             field = dpt.__getattribute__(name)
             if isinstance(field, IntEnum):
                 description[name] = field.name
             else:
                 description[name] = field
-        if (isinstance(dpt, DPT_Float_16) or
-                isinstance(dpt, DPT_Float_32)):
+        if isinstance(dpt, DPT_Float_16) or isinstance(dpt, DPT_Float_32):
             description["decoded_value"] = dpt.decode()
         elif not fields:
             description["value"] = dpt.value
@@ -100,7 +106,7 @@ class DPT(object):
 
 class _DPT_Switch(LittleEndianStructure):
 
-    _fields_ = [('action', c_uint8, 1)]
+    _fields_ = [("action", c_uint8, 1)]
 
 
 class DPT_Switch(Union, DPT):
@@ -121,20 +127,19 @@ class DPT_Switch(Union, DPT):
     length = DPT.Length.LESS_THAN_A_BYTE
 
     class Action(IntEnum):
-        off = 0x00,
-        on = 0x01,
+        off = (0x00,)
+        on = (0x01,)
 
     @property
     def action(self):
         return self.Action(self.bits.action)
-    
+
     @action.setter
     def action(self, value):
         value = getattr(self.Action, value)
         self.bits.action = self.Action(value)
 
-    _fields_ = [('bits', _DPT_Switch),
-                ('value', c_uint8)]
+    _fields_ = [("bits", _DPT_Switch), ("value", c_uint8)]
 
 
 class DPT_Alarm(DPT_Switch, DPT):
@@ -155,16 +160,17 @@ class DPT_Alarm(DPT_Switch, DPT):
     length = DPT.Length.LESS_THAN_A_BYTE
 
     class Action(IntEnum):
-        no_alarm = 0x00,
-        alarm = 0x01,
+        no_alarm = (0x00,)
+        alarm = (0x01,)
 
-    _fields_ = [('bits', _DPT_Switch),
-                ('value', c_uint8)]
+    _fields_ = [("bits", _DPT_Switch), ("value", c_uint8)]
+
 
 class _DPT_UpDown(LittleEndianStructure):
 
-    _fields_ = [('direction', c_uint8, 1)]    
-    
+    _fields_ = [("direction", c_uint8, 1)]
+
+
 class DPT_UpDown(Union, DPT):
     """
     >>> import knx_stack
@@ -183,25 +189,25 @@ class DPT_UpDown(Union, DPT):
     length = DPT.Length.LESS_THAN_A_BYTE
 
     class Direction(IntEnum):
-        up = 0x00,
-        down = 0x01,
+        up = (0x00,)
+        down = (0x01,)
 
     @property
     def direction(self):
         return self.Direction(self.bits.direction)
-    
+
     @direction.setter
     def direction(self, value):
         value = getattr(self.Direction, value)
         self.bits.direction = self.Direction(value)
 
-    _fields_ = [('bits', _DPT_UpDown),
-                ('value', c_uint8)]
+    _fields_ = [("bits", _DPT_UpDown), ("value", c_uint8)]
 
 
 class _DPT_Start(LittleEndianStructure):
 
-    _fields_ = [('action', c_uint8, 1)]
+    _fields_ = [("action", c_uint8, 1)]
+
 
 class DPT_Start(Union, DPT):
     """
@@ -221,8 +227,8 @@ class DPT_Start(Union, DPT):
     length = DPT.Length.LESS_THAN_A_BYTE
 
     class Action(IntEnum):
-        stop = 0x00,
-        start = 0x01,
+        stop = (0x00,)
+        start = (0x01,)
 
     @property
     def action(self):
@@ -233,17 +239,16 @@ class DPT_Start(Union, DPT):
         value = getattr(self.Action, value)
         self.bits.action = self.Action(value)
 
-    _fields_ = [('bits', _DPT_Start),
-                ('value', c_uint8)]
+    _fields_ = [("bits", _DPT_Start), ("value", c_uint8)]
 
 
 class DPT_Info_Switch(DPT_Switch):
     pass
 
+
 class _DPTVimarScene(LittleEndianStructure):
 
-    _fields_ = [('index', c_uint8, 6),
-                ('command', c_uint8, 2)]
+    _fields_ = [("index", c_uint8, 6), ("command", c_uint8, 2)]
 
 
 class DPTVimarScene(Union, DPT):
@@ -261,36 +266,37 @@ class DPTVimarScene(Union, DPT):
     """
 
     class Command(IntEnum):
-        attiva = 0x00,
-        cancella = 0x01,
-        memorizza = 0x02,
+        attiva = (0x00,)
+        cancella = (0x01,)
+        memorizza = (0x02,)
         identifica = 0x03
 
     @property
     def command(self):
         return self.Command(self.bits.command)
-    
+
     @command.setter
     def command(self, value):
         value = getattr(self.Command, value)
         self.bits.command = self.Command(value)
-        
+
     @property
     def index(self):
         return self.bits.index
-    
+
     @index.setter
     def index(self, value):
         self.bits.index = value
 
-    _fields_ = [('bits', _DPTVimarScene),
-                ('value', c_uint8)]
+    _fields_ = [("bits", _DPTVimarScene), ("value", c_uint8)]
 
 
 class _DPT_SceneControl(LittleEndianStructure):
-    _fields_ = [('number', c_uint8, 6),
-                ('reserved', c_uint8, 1),
-                ('command', c_uint8, 1)]
+    _fields_ = [
+        ("number", c_uint8, 6),
+        ("reserved", c_uint8, 1),
+        ("command", c_uint8, 1),
+    ]
 
 
 class DPT_SceneControl(Union, DPT):
@@ -308,8 +314,8 @@ class DPT_SceneControl(Union, DPT):
     """
 
     class Command(IntEnum):
-        activate = 0x00,
-        learn = 0x01,
+        activate = (0x00,)
+        learn = (0x01,)
 
     @property
     def command(self):
@@ -328,14 +334,12 @@ class DPT_SceneControl(Union, DPT):
     def number(self, value):
         self.bits.number = value
 
-    _fields_ = [('bits', _DPT_SceneControl),
-                ('value', c_uint8)]
+    _fields_ = [("bits", _DPT_SceneControl), ("value", c_uint8)]
 
 
 class _DPT_Control_Dimming(LittleEndianStructure):
 
-    _fields_ = [('step', c_uint8, 3),
-                ('direction', c_uint8, 1)]
+    _fields_ = [("step", c_uint8, 3), ("direction", c_uint8, 1)]
 
 
 class DPT_Control_Dimming(Union, DPT):
@@ -353,8 +357,8 @@ class DPT_Control_Dimming(Union, DPT):
     """
 
     class Direction(IntEnum):
-        down = 0x00,
-        up = 0x01,
+        down = (0x00,)
+        up = (0x01,)
 
     @property
     def step(self):
@@ -373,8 +377,8 @@ class DPT_Control_Dimming(Union, DPT):
         value = getattr(self.Direction, value)
         self.bits.direction = self.Direction(value)
 
-    _fields_ = [('bits', _DPT_Control_Dimming),
-                ('value', c_uint8)]
+    _fields_ = [("bits", _DPT_Control_Dimming), ("value", c_uint8)]
+
 
 class DPT_Brightness(Union, DPT):
     """
@@ -383,29 +387,25 @@ class DPT_Brightness(Union, DPT):
     >>> brightness.value = 0x32
     >>> brightness.value
     50
-    """    
+    """
 
-    _fields_ = [('bits', c_uint8),
-                ('value', c_uint8)]
+    _fields_ = [("bits", c_uint8), ("value", c_uint8)]
 
 
 class _DPTSetupClima(LittleEndianStructure):
 
     _fields_ = [
-                ('temporizzazione', c_uint8, 8),
-
-                ('setpoint', c_uint8, 8),
-
-                ('differenziale', c_uint8, 5),
-                ('variazione_setpoint', c_uint8, 2),
-                ('unita_misura', c_uint8, 1),
-
-                ('funzionamento', c_uint8, 4),
-                ('centralizzato', c_uint8, 1),
-                ('stagione', c_uint8, 1),
-                ('terziario', c_uint8, 1),
-                ('riservato', c_uint8, 1),
-                ]
+        ("temporizzazione", c_uint8, 8),
+        ("setpoint", c_uint8, 8),
+        ("differenziale", c_uint8, 5),
+        ("variazione_setpoint", c_uint8, 2),
+        ("unita_misura", c_uint8, 1),
+        ("funzionamento", c_uint8, 4),
+        ("centralizzato", c_uint8, 1),
+        ("stagione", c_uint8, 1),
+        ("terziario", c_uint8, 1),
+        ("riservato", c_uint8, 1),
+    ]
 
 
 class DPTSetupClima(Union, DPT):
@@ -518,24 +518,21 @@ class DPTSetupClima(Union, DPT):
     def variazione_setpoint(self, value):
         self.bits.variazione_setpoint = value
 
-    _fields_ = [('bits', _DPTSetupClima),
-                ('value', c_uint32)]
+    _fields_ = [("bits", _DPTSetupClima), ("value", c_uint32)]
 
 
 class _DPTInfoClimaReport(LittleEndianStructure):
 
     _fields_ = [
-        ('temperatura_lsb', c_uint8, 8),
-        ('temperatura_msb', c_uint8, 1),
-        ('temporizzazione', c_uint8, 7),
-
-        ('setpoint', c_uint8, 8),
-
-        ('funzionamento', c_uint8, 4),
-        ('centralizzato', c_uint8, 1),
-        ('stagione', c_uint8, 1),
-        ('terziario', c_uint8, 1),
-        ('stato_rele', c_uint8, 1),
+        ("temperatura_lsb", c_uint8, 8),
+        ("temperatura_msb", c_uint8, 1),
+        ("temporizzazione", c_uint8, 7),
+        ("setpoint", c_uint8, 8),
+        ("funzionamento", c_uint8, 4),
+        ("centralizzato", c_uint8, 1),
+        ("stagione", c_uint8, 1),
+        ("terziario", c_uint8, 1),
+        ("stato_rele", c_uint8, 1),
     ]
 
 
@@ -583,26 +580,24 @@ class DPTInfoClimaReport(Union, DPT):
 
     @property
     def temperatura(self):
-        return ((self.bits.temperatura_msb << 8) + self.bits.temperatura_lsb)/10
+        return ((self.bits.temperatura_msb << 8) + self.bits.temperatura_lsb) / 10
 
     @temperatura.setter
     def temperatura(self, value):
-        self.bits.temperatura_msb = int((value*10)) >> 8
-        self.bits.temperatura_lsb = int((value*10))
+        self.bits.temperatura_msb = int((value * 10)) >> 8
+        self.bits.temperatura_lsb = int((value * 10))
 
-    _fields_ = [('bits', _DPTInfoClimaReport),
-                ('value', c_uint32)]
+    _fields_ = [("bits", _DPTInfoClimaReport), ("value", c_uint32)]
 
 
 class _DPT_Float_16(LittleEndianStructure):
 
-    _fields_ = [('_mantissa_lsb', c_uint8, 8),
-
-                ('_mantissa_msb', c_uint8, 3),
-                ('exponent', c_uint8, 4),
-                ('_sign', c_uint8, 1),
-
-                ]
+    _fields_ = [
+        ("_mantissa_lsb", c_uint8, 8),
+        ("_mantissa_msb", c_uint8, 3),
+        ("exponent", c_uint8, 4),
+        ("_sign", c_uint8, 1),
+    ]
 
     @property
     def sign(self):
@@ -659,20 +654,25 @@ class DPT_Float_16(Union):
     1900
     """
 
-    _fields_ = [('bits', _DPT_Float_16),
-                ('value', c_uint16)]
+    _fields_ = [("bits", _DPT_Float_16), ("value", c_uint16)]
 
     length = DPT.Length.A_BYTE_OR_MORE
 
     def decode(self):
-        mantissa = self.bits.mantissa if self.bits.sign == 1 else self.twos_comp(self.bits.mantissa, 11)
-        decoded_data = self.bits.sign*(0.01*mantissa)*(2**self.bits.exponent)
+        mantissa = (
+            self.bits.mantissa
+            if self.bits.sign == 1
+            else self.twos_comp(self.bits.mantissa, 11)
+        )
+        decoded_data = self.bits.sign * (0.01 * mantissa) * (2 ** self.bits.exponent)
         return decoded_data
 
     def encode(self, value):
         sign = math.copysign(1, value)
 
-        decimal_mantissa = decimal.Decimal(value/0.01)  # used decimal to avoid different rounding
+        decimal_mantissa = decimal.Decimal(
+            value / 0.01
+        )  # used decimal to avoid different rounding
         mantissa = abs(int(round(decimal_mantissa, 2)))  # two decimals
 
         exp = 0
@@ -762,8 +762,7 @@ class DPT_Float_32(Union):
     511.0
     """
 
-    _fields_ = [('bits', c_float),
-                ('value', c_uint32)]
+    _fields_ = [("bits", c_float), ("value", c_uint32)]
 
     length = DPT.Length.A_BYTE_OR_MORE
 
@@ -783,4 +782,3 @@ class DPT_Value_Power(DPT_Float_32):
     >>> import knx_stack
     >>> f = knx_stack.datapointtypes.DPT_Value_Power()
     """
-
