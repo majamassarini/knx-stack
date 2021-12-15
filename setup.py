@@ -6,7 +6,7 @@ with open(path.join(".", 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name="knx-stack",
-      version="0.9.1",
+      version="0.9.2",
       description="A python3 KNX stack for USB HID and KNXnet IP",
       url="https://github.com/majamassarini/knx-stack",
       long_description=long_description,

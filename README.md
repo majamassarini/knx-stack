@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/majamassarini/knx-stack.svg?branch=master)](https://travis-ci.com/majamassarini/knx-stack)
 [![codecov](https://codecov.io/gh/majamassarini/knx-stack/branch/master/graph/badge.svg?token=HQ27JK26MT)](https://codecov.io/gh/majamassarini/knx-stack)
-[![Documentation Status](https://readthedocs.com/projects/maja-massarini-knx-stack/badge/?version=latest&token=8336c023fa5922b6e166d8ef4cc2b5b52c8fa4d746995cddc6a29a99656e5cce)](https://maja-massarini-knx-stack.readthedocs-hosted.com/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/knx-stack/badge/?version=latest)](https://knx-stack.readthedocs.io/en/latest/?badge=latest)
 
 A Python 3 KNX stack, not complete but easily extensible.
 
@@ -146,7 +146,7 @@ pip install knx-stack
 
 ## Diving In
 
-[Documentation](https://maja-massarini-knx-stack.readthedocs-hosted.com/en/latest/?)
+[Documentation](https://knx-stack.readthedocs.io/en/latest/?badge=latest)
 
 ## Contributing
 
