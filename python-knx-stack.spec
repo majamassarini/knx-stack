@@ -1,14 +1,14 @@
 %global pypi_name         knx-stack
 
 Name:           python-%{pypi_name}
-Version:        0.9.3
+Version:        0.9.2
 Release:        1%{?dist}
 Summary:        A Python 3 KNX stack, not complete but easily extensible
 
 License:        MIT
 
 Url:            https://github.com/majamassarini/knx-stack
-Source0:        https://github.com/majamassarini/knx-stack/archive/v%{version}/%{pypi_name}-%{version}.tar.gz
+Source0:        https://github.com/majamassarini/knx-stack/archive/%{version}/%{pypi_name}-%{version}.tar.gz
 
 BuildArch:      noarch
 
@@ -44,9 +44,9 @@ Summary:        %{summary}
 
 %files -n python3-%{pypi_name}
 %license COPYING
-%doc README.rst
-%{python3_sitelib}/%{pypi-name}-%{version}.dist-info/
-%{python3_sitelib}/%{pypi-name}
+%doc README.md
+%{python3_sitelib}/knx_stack-%{version}.dist-info/
+%{python3_sitelib}/knx_stack
 
 %changelog
 %autochangelog
