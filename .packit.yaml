@@ -15,8 +15,6 @@ downstream_package_name: knx-stack
 
 upstream_project_url: https://github.com/majamassarini/knx-stack
 
-upstream_tag_template: version
-
 jobs:
 - job: copr_build
   trigger: pull_request
