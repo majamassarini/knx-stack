@@ -15,10 +15,8 @@ downstream_package_name: knx-stack
 
 upstream_project_url: https://github.com/majamassarini/knx-stack
 
-upstream_tag_template: v{version}
-
 jobs:
 - job: copr_build
-  trigger: commit
+  trigger: pull_request
   metadata:
     targets: fedora-stable
