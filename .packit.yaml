@@ -15,6 +15,8 @@ downstream_package_name: knx-stack
 
 upstream_project_url: https://github.com/majamassarini/knx-stack
 
+owner: mmassari
+
 jobs:
 - job: copr_build
   trigger: pull_request
