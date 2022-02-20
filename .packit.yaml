@@ -22,9 +22,10 @@ jobs:
   metadata:
     targets: fedora-stable
     owner: mmassari
-    project: {repository_name}-{pr_id}
+    project: knx-stack
 - job: copr_build
   trigger: commit
   metadata:
     targets: fedora-stable
     owner: mmassari
+    project: knx-stack
