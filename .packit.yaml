@@ -18,9 +18,11 @@ upstream_project_url: https://github.com/majamassarini/knx-stack
 jobs:
 - job: copr_build
   trigger: pull_request
+  owner: mmassari
   metadata:
     targets: fedora-stable
 - job: copr_build
   trigger: commit
+  owner: mmassari
   metadata:
     targets: fedora-stable
