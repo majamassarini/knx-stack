@@ -19,12 +19,14 @@ issue_repository: https://github.com/majamassarini/knx-stack
 
 jobs:
 - job: copr_build
+  packit_instances: ["stg"]
   trigger: pull_request
   metadata:
     targets: fedora-stable
     owner: mmassari
     project: knx-stack
 - job: copr_build
+  packit_instances: ["stg"]
   trigger: commit
   metadata:
     targets: fedora-stable
