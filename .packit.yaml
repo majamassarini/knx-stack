@@ -1,6 +1,6 @@
 # See the documentation for more information:
 # https://packit.dev/docs/configuration/
-
+packit_instances: ["prod", "stg"]
 specfile_path: python-knx-stack.spec
 
 # add or remove files that should be synced
@@ -18,12 +18,14 @@ upstream_project_url: https://github.com/majamassarini/knx-stack
 
 jobs:
 - job: copr_build
+  packit_instances: ["stg"]
   trigger: pull_request
   metadata:
     targets: fedora-stable
     owner: mmassari
     project: knx-stack
 - job: copr_build
+  packit_instances: ["stg"]
   trigger: commit
   metadata:
     targets: fedora-stable
