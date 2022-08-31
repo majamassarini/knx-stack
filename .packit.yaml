@@ -14,6 +14,7 @@ upstream_package_name: knx-stack
 downstream_package_name: knx-stack
 
 upstream_project_url: https://github.com/majamassarini/knx-stack
+issue_repository: https://github.com/majamassarini/knx-stack
 
 
 jobs:
