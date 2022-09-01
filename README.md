@@ -150,7 +150,7 @@ pip install knx-stack
 
 ## Contributing
 
-Pull requests are welcome, and I am waiting for them.
+Pull requests are welcome.
 
 ## License
 
