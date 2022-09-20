@@ -1,5 +1,6 @@
 # See the documentation for more information:
 # https://packit.dev/docs/configuration/
+packit_instances: ["stg", ]
 
 specfile_path: python-knx-stack.spec
 
@@ -14,7 +15,7 @@ upstream_package_name: knx-stack
 downstream_package_name: knx-stack
 
 upstream_project_url: https://github.com/majamassarini/knx-stack
-
+issue_repository: https://github.com/majamassarini/knx-stack
 
 jobs:
 - job: copr_build
