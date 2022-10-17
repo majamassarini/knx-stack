@@ -13,3 +13,15 @@ files_to_sync:
 upstream_package_name: knx-stack
 # downstream (Fedora) RPM package name
 downstream_package_name: knx-stack
+
+jobs:
+- job: copr_build
+  trigger: pull_request
+  targets: fedora-stable
+  owner: mmassari
+  project: knx-stack
+- job: copr_build
+  trigger: commit
+  targets: fedora-stable
+  owner: mmassari
+  project: knx-stack
