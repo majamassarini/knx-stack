@@ -1,6 +1,7 @@
 # See the documentation for more information:
 # https://packit.dev/docs/configuration/
 
+packit_instances: ["stg"]
 specfile_path: python-knx-stack.spec
 
 # add or remove files that should be synced
