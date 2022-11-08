@@ -62,4 +62,3 @@ Description Factory
 ^^^^^^^^^^^^^^^^^^^^^^
 
 .. autoclass:: knx_stack.datapointtypes.DPT_Value_Power
-

@@ -73,13 +73,13 @@ class State:
         self._sequence_counter_local = 0
 
     def __repr__(self, *args, **kwargs):
-        s = """ State for %s\n
-        %s\n
-        %s\n
-        LData structure (for decode functions): %s\n
-        ASAP: %s, APCI: %s, Address Type: %s\n
-        Sequence Counter (remote): %s\n
-        Sequence Counter (local): %s\n""" % (
+        s = """ State for {}\n
+        {}\n
+        {}\n
+        LData structure (for decode functions): {}\n
+        ASAP: {}, APCI: {}, Address Type: {}\n
+        Sequence Counter (remote): {}\n
+        Sequence Counter (local): {}\n""".format(
             self.medium,
             self.association_table,
             self.datapointtypes,

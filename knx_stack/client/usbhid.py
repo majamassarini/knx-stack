@@ -4,7 +4,7 @@ import knx_stack
 from typing import Iterable, NamedTuple
 
 
-class Client(object):
+class Client:
     """
     *A minimal asynchronous USB HID KNX Client*.
 

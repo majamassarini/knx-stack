@@ -20,5 +20,3 @@ GroupObjectTable
 ----------------
 
 .. autoclass:: knx_stack.GroupObjectTable
-
-

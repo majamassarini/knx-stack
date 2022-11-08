@@ -39,4 +39,3 @@ Encode to bus messages
 .. automodule:: knx_stack.encode.layer.application.a_property_value_read.req
 
 .. automodule:: knx_stack.encode.layer.application.a_property_value_write.req
-

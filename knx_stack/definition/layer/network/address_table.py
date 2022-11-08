@@ -5,7 +5,7 @@ class AddressTableException(Exception):
     """Max entries already written inside address table"""
 
 
-class AddressTable(object):
+class AddressTable:
     """
     **4.9 Group Address Table (GrAT)**
 
