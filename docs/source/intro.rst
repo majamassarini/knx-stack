@@ -166,4 +166,3 @@ Decode to a dictionary
     >>> factory = knx_stack.datapointtypes.Description_Factory()
     >>> factory.make(msgs[0].dpt)
     ('DPT_Switch', {'action': 'off'})
-

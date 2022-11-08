@@ -5,7 +5,7 @@ import math
 import decimal
 
 
-class DPT_Factory(object):
+class DPT_Factory:
     @staticmethod
     def make(dpt: str, fields_values: dict) -> "knx_stack.datapointtypes.DPT":
         """
@@ -40,7 +40,7 @@ class DPT_Factory(object):
         return dpt
 
 
-class Description_Factory(object):
+class Description_Factory:
     @staticmethod
     def make(dpt):
         """
@@ -65,16 +65,10 @@ class Description_Factory(object):
         ('DPT_Value_Lux', {'decoded_value': 9999.36})
         """
         description = {}
-        fields = set(
-            [
-                name
-                for name, _ in inspect.getmembers(
-                    dpt.__class__, inspect.isdatadescriptor
-                )
-            ]
-        ) - set(
-            ["bits", "value", "__weakref__", "_b_base_", "_b_needsfree_", "_objects"]
-        )
+        fields = {
+            name
+            for name, _ in inspect.getmembers(dpt.__class__, inspect.isdatadescriptor)
+        } - {"bits", "value", "__weakref__", "_b_base_", "_b_needsfree_", "_objects"}
         for name in fields:
             field = dpt.__getattribute__(name)
             if isinstance(field, IntEnum):
@@ -88,7 +82,7 @@ class Description_Factory(object):
         return dpt.__class__.__name__, description
 
 
-class DPT(object):
+class DPT:
     """
     An abstract KNX DPT
     """
@@ -584,8 +578,8 @@ class DPTInfoClimaReport(Union, DPT):
 
     @temperatura.setter
     def temperatura(self, value):
-        self.bits.temperatura_msb = int((value * 10)) >> 8
-        self.bits.temperatura_lsb = int((value * 10))
+        self.bits.temperatura_msb = int(value * 10) >> 8
+        self.bits.temperatura_lsb = int(value * 10)
 
     _fields_ = [("bits", _DPTInfoClimaReport), ("value", c_uint32)]
 
@@ -664,7 +658,7 @@ class DPT_Float_16(Union):
             if self.bits.sign == 1
             else self.twos_comp(self.bits.mantissa, 11)
         )
-        decoded_data = self.bits.sign * (0.01 * mantissa) * (2 ** self.bits.exponent)
+        decoded_data = self.bits.sign * (0.01 * mantissa) * (2**self.bits.exponent)
         return decoded_data
 
     def encode(self, value):

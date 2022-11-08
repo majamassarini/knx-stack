@@ -20,4 +20,3 @@ ThreeLevelStyle
 ---------------
 
 .. autoclass:: knx_stack.address.ThreeLevelStyle
-

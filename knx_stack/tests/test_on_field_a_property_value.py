@@ -20,37 +20,31 @@ if __name__ == "__main__":
     msgs = list()
     for i in (0x66, 0x67, 0x68):
         msgs.append(
-            (
-                knx_stack.encode.layer.application.a_property_value_read.req.Msg(
-                    asap=0,
-                    object_index=0,
-                    property_id=i,
-                    number_of_elements=1,
-                    start_index=0x24,
-                )
+            knx_stack.encode.layer.application.a_property_value_read.req.Msg(
+                asap=0,
+                object_index=0,
+                property_id=i,
+                number_of_elements=1,
+                start_index=0x24,
             )
         )  # adjustable misuratore
     for i in (0x79, 0x7A, 0x7B):
         msgs.append(
-            (
-                knx_stack.encode.layer.application.a_property_value_read.req.Msg(
-                    asap=0,
-                    object_index=0,
-                    property_id=i,
-                    number_of_elements=1,
-                    start_index=0x13,
-                )
+            knx_stack.encode.layer.application.a_property_value_read.req.Msg(
+                asap=0,
+                object_index=0,
+                property_id=i,
+                number_of_elements=1,
+                start_index=0x13,
             )
         )  # adjustable linea
         msgs.append(
-            (
-                knx_stack.encode.layer.application.a_property_value_read.req.Msg(
-                    asap=0,
-                    object_index=0,
-                    property_id=i,
-                    number_of_elements=1,
-                    start_index=0x11,
-                )
+            knx_stack.encode.layer.application.a_property_value_read.req.Msg(
+                asap=0,
+                object_index=0,
+                property_id=i,
+                number_of_elements=1,
+                start_index=0x11,
             )
         )  # misura tipo linea
     msgs.append(knx_stack.layer.application.a_group_value_read.req.Msg(asap=1))
