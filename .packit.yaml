@@ -1,0 +1,15 @@
+# See the documentation for more information:
+# https://packit.dev/docs/configuration/
+
+packit_instances: ["stg"]
+specfile_path: python-knx-stack.spec
+
+# add or remove files that should be synced
+files_to_sync:
+    - python-knx-stack.spec
+    - .packit.yaml
+
+# name in upstream package repository or registry (e.g. in PyPI)
+upstream_package_name: knx-stack
+# downstream (Fedora) RPM package name
+downstream_package_name: knx-stack
