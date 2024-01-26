@@ -1,23 +1,7 @@
-# See the documentation for more information:
-# https://packit.dev/docs/configuration/
 packit_instances: ["stg"]
 
-specfile_path: python-knx-stack.spec
-
-# add or remove files that should be synced
-synced_files:
-  - python-knx-stack.spec
-  - .packit.yaml
-
-#release_suffix: ""
-
-# name in upstream package repository or registry (e.g. in PyPI)
-upstream_package_name: knx-stack
-# downstream (Fedora) RPM package name
-downstream_package_name: knx-stack
-
 upstream_project_url: https://github.com/majamassarini/knx-stack
-issue_repository: https://github.com/majamassarini/knx-stack
+specfile_path: python-knx-stack.spec
 
 jobs:
   - job: copr_build
@@ -25,19 +9,14 @@ jobs:
     targets: fedora-stable
     owner: mmassari
     project: knx-stack
-  - job: copr_build
-    trigger: commit
-    targets: fedora-stable
-    owner: mmassari
-    project: knx-stack
   - job: vm_image_build
     trigger: pull_request
-    copr_chroot: fedora-36-x86_64
+    copr_chroot: fedora-39-x86_64
     owner: mmassari
     project: knx-stack
     image_customizations:
       packages: [python-knx-stack]
-    image_distribution: fedora-36
+    image_distribution: fedora-39
     image_request:
       architecture: x86_64
       image_type: aws
