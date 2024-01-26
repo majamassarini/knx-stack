@@ -6,13 +6,14 @@
 
 A Python 3 KNX stack, not complete but easily extensible.
 
-It is able to *encode/decode* knx messages for both **USB HID** and **KNXnet IP**.
+It is able to _encode/decode_ knx messages for both **USB HID** and **KNXnet IP**.
 
 It can be used with an **asynchronous** or **synchronous** client.
 
 ## Examples
 
-### Setup 
+### Setup
+
 ```python
     >>> import knx_stack
     >>> individual_address = knx_stack.Address(0x0001)
@@ -137,7 +138,6 @@ It can be used with an **asynchronous** or **synchronous** client.
     ('DPT_Switch', {'action': 'off'})
 ```
 
-
 ## Installation
 
 ```
@@ -155,4 +155,3 @@ Pull requests are welcome.
 ## License
 
 knx-stack is licensed under the MIT license.
-

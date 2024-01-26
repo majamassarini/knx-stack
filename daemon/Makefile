@@ -3,7 +3,7 @@ SOURCE=usbhid.c
 
 all: $(TARGET)
 
-clean: 
+clean:
 	rm -f knxstack-usbhid-daemon
 
 $(TARGET) : $(SOURCE)

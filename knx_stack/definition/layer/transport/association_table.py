@@ -53,7 +53,7 @@ class ASAP:
         return self.value
 
 
-class AssociationTable(object):
+class AssociationTable:
     """
     **4.10 Group Object Association Table (GrOAT)**
 

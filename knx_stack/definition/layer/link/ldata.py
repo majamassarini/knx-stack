@@ -129,7 +129,7 @@ class L_Data(LittleEndianStructure):
     """
 
     def __init__(self, *args, **kwargs):
-        super(L_Data, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._make_default()
 
     def _make_default(self):
