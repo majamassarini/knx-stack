@@ -67,8 +67,8 @@ class Client(object):
         self._state = state
         self.loop = asyncio.get_event_loop()
         self.loop.run_until_complete(self._open_connection())
-        self.loop.create_task(self._knx_write(send_msgs))
-        self.loop.create_task(self._knx_read())
+        self.loop.create_task(self._knx_write(send_msgs), name="Knx write")
+        self.loop.create_task(self._knx_read(), name="Knx read")
 
         self.logger = logging.getLogger(__name__)
 
