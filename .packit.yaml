@@ -5,7 +5,7 @@ packit_instances: ["stg", ]
 specfile_path: python-knx-stack.spec
 
 # add or remove files that should be synced
-synced_files:
+files_to_sync:
     - python-knx-stack.spec
     - .packit.yaml
 
