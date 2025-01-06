@@ -12,11 +12,12 @@ def encode(
     """
     >>> import knx_stack
     >>> state = knx_stack.knxnet_ip.State(knx_stack.Medium.knxnet_ip, None, None)
+    >>> state.communication_channel_id = 5
     >>> disconnect_request = knx_stack.knxnet_ip.core.disconnect.req.Msg(addr_control_endpoint='127.0.0.1',
     ...                                                                  port_control_endpoint=1234)
     >>> bus_msg = knx_stack.encode_msg(state, disconnect_request)
     >>> bus_msg
-    061002090010000008017F00000104D2
+    061002090010050008017F00000104D2
     """
     ip_control_endpoint = socket.inet_aton(msg.addr_control_endpoint)
     hpai_control_endpoint = hpai.create(ip_control_endpoint, msg.port_control_endpoint)
