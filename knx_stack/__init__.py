@@ -19,6 +19,7 @@ from knx_stack import client
 encode_mapping = {
     knxnet_ip.core.connect.req.Msg: encode.knxnet_ip.core.connect.req.encode,
     knxnet_ip.core.disconnect.req.Msg: encode.knxnet_ip.core.disconnect.req.encode,
+    knxnet_ip.core.disconnect.res.Msg: encode.knxnet_ip.core.disconnect.res.encode,
     knxnet_ip.core.connectionstate.req.Msg: encode.knxnet_ip.core.connectionstate.req.encode,
     knxnet_ip.core.search.req.Msg: encode.knxnet_ip.core.search.req.encode,
     knxnet_ip.tunneling.ack.Msg: encode.knxnet_ip.tunneling.ack.encode,
