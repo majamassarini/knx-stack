@@ -2,9 +2,9 @@ name: knx-stack
 
 on:
   push:
-    branches: [ kickoff ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ kickoff ]
+    branches: [ main, dev ]
 
 jobs:
   build:
