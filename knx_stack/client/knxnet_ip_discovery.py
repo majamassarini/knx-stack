@@ -171,10 +171,10 @@ if __name__ == "__main__":
 
     if len(sys.argv):
         transport1, _ = loop.run_until_complete(
-            loop.create_task(listen_discovery_responses(sys.argv[0], 5544))
+            loop.create_task(listen_discovery_responses(sys.argv[1], 5544))
         )
         transport2, _ = loop.run_until_complete(
-            loop.create_task(send_discovery_request(sys.argv[0], 5544))
+            loop.create_task(send_discovery_request(sys.argv[1], 5544))
         )
 
     try:
