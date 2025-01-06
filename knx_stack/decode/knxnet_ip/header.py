@@ -28,6 +28,8 @@ def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTupl
     if header.value == HEADER_SIZE_10 and version.value == KNXNETIP_VERSION_10:
         if service.value == Services.SEARCH_RESPONSE:
             result = core.search.res.decode(state, body)
+        elif service.value == Services.DISCONNECT_REQUEST:
+            result = core.disconnect.req.decode(state, body)
         elif service.value == Services.DISCONNECT_RESPONSE:
             result = core.disconnect.res.decode(state, body)
         elif service.value == Services.CONNECT_RESPONSE:
