@@ -1,4 +1,4 @@
-name: knx-stack
+name: Unit Tests
 
 on:
   push:
@@ -7,36 +7,78 @@ on:
     branches: [ main, dev ]
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v4
+
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: 3.8
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest coverage
+        pip install coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         python setup.py install
-    # - name: Lint with flake8
-    #  run: |
-        # stop the build if there are Python syntax errors or undefined names
-        # flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        # flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test and Coverage
+
+    - name: Run unit tests with coverage
       run: |
-        python -m coverage run
-        python -m coverage report
-    - name: Build egg
+        python -m coverage run -m unittest discover -v
+
+    - name: Run doctests
       run: |
-        python setup.py bdist_egg        
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.1.4
+        python -m doctest knx_stack/address.py -v
+        python -m doctest knx_stack/datapointtypes.py -v
+        python -m doctest knx_stack/msg.py -v
+        python -m doctest knx_stack/state.py -v
+        python -m doctest knx_stack/definition/layer/link/ldata.py -v
+        python -m doctest knx_stack/definition/layer/network/address_table.py -v
+        python -m doctest knx_stack/definition/layer/transport/association_table.py -v
+        python -m doctest knx_stack/definition/layer/application/groupobject_table.py -v
+        python -m doctest knx_stack/definition/layer/application/a_property_value.py -v
+        python -m doctest knx_stack/encode/knxnet_ip/core/connect/req.py -v
+        python -m doctest knx_stack/encode/knxnet_ip/core/disconnect/req.py -v
+        python -m doctest knx_stack/encode/knxnet_ip/core/disconnect/res.py -v
+        python -m doctest knx_stack/encode/knxnet_ip/core/connectionstate/req.py -v
+        python -m doctest knx_stack/encode/knxnet_ip/core/search/req.py -v
+        python -m doctest knx_stack/encode/knxnet_ip/tunneling/req.py -v
+        python -m doctest knx_stack/encode/knxnet_ip/tunneling/ack.py -v
+        python -m doctest knx_stack/encode/knxnet_ip/header.py -v
+        python -m doctest knx_stack/encode/layer/application/a_group_value_read/req.py -v
+        python -m doctest knx_stack/encode/layer/application/a_group_value_write/req.py -v
+        python -m doctest knx_stack/encode/layer/application/a_property_value_read/req.py -v
+        python -m doctest knx_stack/encode/layer/application/a_property_value_write/req.py -v
+        python -m doctest knx_stack/encode/layer/transport/t_connect/req.py -v
+        python -m doctest knx_stack/decode/usb_hid/report_header/report_identifier.py -v
+        python -m doctest knx_stack/decode/knxnet_ip/core/search/res.py -v
+        python -m doctest knx_stack/decode/knxnet_ip/core/connect/res.py -v
+        python -m doctest knx_stack/decode/knxnet_ip/core/disconnect/req.py -v
+        python -m doctest knx_stack/decode/knxnet_ip/core/disconnect/res.py -v
+        python -m doctest knx_stack/decode/knxnet_ip/core/connectionstate/res.py -v
+        python -m doctest knx_stack/decode/knxnet_ip/tunneling/req.py -v
+        python -m doctest knx_stack/decode/knxnet_ip/tunneling/ack.py -v
+        python -m doctest knx_stack/decode/knxnet_ip/header.py -v
+        python -m doctest knx_stack/decode/layer/application/a_group_value_read/ind.py -v
+        python -m doctest knx_stack/decode/layer/application/a_group_value_read/con.py -v
+        python -m doctest knx_stack/decode/layer/application/a_group_value_write/ind.py -v
+        python -m doctest knx_stack/decode/layer/application/a_group_value_write/con.py -v
+        python -m doctest knx_stack/decode/layer/application/a_property_value_read/ind.py -v
+        python -m doctest knx_stack/decode/layer/application/a_property_value_read/con.py -v
+        python -m doctest knx_stack/decode/layer/application/a_property_value_write/ind.py -v
+        python -m doctest knx_stack/decode/layer/application/a_property_value_write/con.py -v
+
+    - name: Generate coverage report
+      run: |
+        python -m coverage report -m
+        python -m coverage html
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
       with:
-        path: dist/*
+        name: coverage-report
+        path: htmlcov/
