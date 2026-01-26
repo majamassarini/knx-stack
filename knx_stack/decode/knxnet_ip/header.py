@@ -19,7 +19,7 @@ def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTupl
     >>> msg = knx_stack.knxnet_ip.Msg.make_from_str("061004200015047401002900BCE00001ABCD010080")
     >>> data = knx_stack.decode_msg(state, msg)
     >>> data
-    [TunnelingReq(sequence_counter=1, status=<ErrorCodes.E_NO_ERROR: 0>), GroupValueWriteInd (DPT_Switch {'action': 'off'} for asap 1 (an application service access point to 0xABCD))]
+    [TunnelingReq(sequence counter=1, status=<ErrorCodes.E_NO_ERROR: 0>), GroupValueWriteInd (DPT_Switch {'action': 'off'} for asap 1 (an application service access point to 0xABCD))]
     """
     (header, body) = msg.octect()
     (version, body) = body.octect()
