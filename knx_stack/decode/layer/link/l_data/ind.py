@@ -1,4 +1,5 @@
-from typing import Iterable, NamedTuple
+from collections.abc import Iterable
+from typing import NamedTuple
 from knx_stack.definition.layer import AddressType
 from knx_stack.decode.layer import network
 

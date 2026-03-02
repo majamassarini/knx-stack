@@ -1,6 +1,4 @@
-from typing import Iterable
-
-
+from collections.abc import Iterable
 class AddressTableException(Exception):
     """Max entries already written inside address table"""
 

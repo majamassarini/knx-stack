@@ -1,6 +1,3 @@
-from typing import Dict
-
-
 class GroupObjectTable:
     """
     A simplified version of a **Group Object Table** (4.11) with just an association between *ASAPs and Datapoint Types*.
@@ -20,7 +17,7 @@ class GroupObjectTable:
     1
     """
 
-    def __init__(self, associations: Dict = None):
+    def __init__(self, associations: dict = None):
         if associations:
             self._associations = associations
         else:

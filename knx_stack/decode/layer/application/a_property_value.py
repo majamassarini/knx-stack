@@ -1,4 +1,5 @@
-from typing import NamedTuple, Iterable
+from collections.abc import Iterable
+from typing import NamedTuple
 from knx_stack.definition.layer.transport.association_table import ASAP
 from knx_stack.definition.layer import PropertyServiceHeader
 

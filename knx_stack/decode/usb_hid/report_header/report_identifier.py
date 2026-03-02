@@ -1,4 +1,5 @@
-from typing import Iterable, NamedTuple
+from collections.abc import Iterable
+from typing import NamedTuple
 from knx_stack.definition.usb_hid import KNX_DATA_EXCHANGE
 from knx_stack.decode.usb_hid.report_header import packet_info
 
