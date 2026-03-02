@@ -1,7 +1,7 @@
 import asyncio
 import logging
-from typing import Iterable, NamedTuple
-
+from collections.abc import Iterable
+from typing import NamedTuple
 import knx_stack
 
 
@@ -52,7 +52,8 @@ class Tunneling(asyncio.DatagramProtocol):
                 switch_off.bits.action = knx_stack.datapointtypes.DPT_Switch.Action.off
                 msgs.append(knx_stack.layer.application.a_group_value_write.req.Msg(asap=asap_command, dpt=switch_off))
 
-                loop = asyncio.get_event_loop()
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
                 transport, protocol = loop.run_until_complete(loop.create_task(start_tunneling('172.31.10.111',
                                                                                                5544,
                                                                                                '172.31.10.250',
@@ -142,7 +143,7 @@ class Tunneling(asyncio.DatagramProtocol):
             req = knx_stack.encode_msg(self._state, msg)
             self.send(req)
             await asyncio.sleep(3)
-        asyncio.get_event_loop().stop()
+        asyncio.get_running_loop().stop()
 
 
 async def start_tunneling(
@@ -201,7 +202,8 @@ if __name__ == "__main__":
         )
     )
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
     transport, protocol = loop.run_until_complete(
         loop.create_task(
             start_tunneling("172.31.10.111", 5544, "172.31.10.250", 3671, state, msgs)

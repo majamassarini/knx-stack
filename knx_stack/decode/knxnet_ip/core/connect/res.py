@@ -1,4 +1,4 @@
-from typing import Iterable
+from collections.abc import Iterable
 from knx_stack.definition.knxnet_ip.core.connect.res import Msg, Status
 
 

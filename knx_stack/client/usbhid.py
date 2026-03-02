@@ -1,9 +1,8 @@
 import asyncio
 import logging
 import knx_stack
-from typing import Iterable, NamedTuple
-
-
+from collections.abc import Iterable
+from typing import NamedTuple
 class Client(object):
     """
     *A minimal asynchronous USB HID KNX Client*.
@@ -65,7 +64,8 @@ class Client(object):
         self._ip = ip
         self._port = port
         self._state = state
-        self.loop = asyncio.get_event_loop()
+        self.loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(self.loop)
         self.loop.run_until_complete(self._open_connection())
         self.loop.create_task(self._knx_write(send_msgs), name="Knx write")
         self.loop.create_task(self._knx_read(), name="Knx read")

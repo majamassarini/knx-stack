@@ -1,5 +1,5 @@
 from ctypes import c_uint8, LittleEndianStructure, Union, c_uint16, c_uint32
-from typing import Iterable, Tuple
+from collections.abc import Iterable
 
 
 class Msg(list):
@@ -47,7 +47,7 @@ class Msg(list):
             )
         )
 
-    def octect(self) -> Tuple["knx_stack.msg.Octect", "knx_stack.Msg"]:
+    def octect(self) -> tuple["knx_stack.msg.Octect", "knx_stack.Msg"]:
         """
         Consumes an Octect from the message's byte list
 
@@ -55,7 +55,7 @@ class Msg(list):
         """
         return self[0], self.__class__(self[1:])
 
-    def short(self) -> Tuple["knx_stack.msg.Short", "knx_stack.Msg"]:
+    def short(self) -> tuple["knx_stack.msg.Short", "knx_stack.Msg"]:
         """
         Consumes a Short from the message's byte list
 
@@ -66,7 +66,7 @@ class Msg(list):
         short.byte.LSB = self[1].value
         return short, self.__class__(self[2:])
 
-    def long(self) -> Tuple["knx_stack.msg.Long", "knx_stack.Msg"]:
+    def long(self) -> tuple["knx_stack.msg.Long", "knx_stack.Msg"]:
         """
         Consumes a Long from the message's byte list
 

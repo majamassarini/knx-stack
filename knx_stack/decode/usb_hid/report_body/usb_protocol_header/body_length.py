@@ -1,4 +1,5 @@
-from typing import Iterable, NamedTuple
+from collections.abc import Iterable
+from typing import NamedTuple
 from knx_stack import Msg
 from knx_stack.decode.usb_hid.report_body.usb_protocol_header import protocol_id
 
