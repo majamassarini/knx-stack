@@ -1,5 +1,6 @@
 import logging
-from typing import Iterable, NamedTuple
+from collections.abc import Iterable
+from typing import NamedTuple
 from knx_stack.definition.knxnet_ip import HEADER_SIZE_10, KNXNETIP_VERSION_10, Services
 from knx_stack.decode.knxnet_ip import core, tunneling
 

@@ -1,4 +1,4 @@
-from typing import Iterable
+from collections.abc import Iterable
 from knx_stack.definition.layer.application.a_group_value_write.con import Msg
 from knx_stack.decode.layer.application import a_group_value
 

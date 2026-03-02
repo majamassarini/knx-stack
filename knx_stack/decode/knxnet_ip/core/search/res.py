@@ -1,4 +1,4 @@
-from typing import Iterable
+from collections.abc import Iterable
 import struct
 import socket
 from knx_stack.definition.knxnet_ip.core.search.res import Msg
