@@ -1,5 +1,5 @@
 import logging
-from typing import Iterable
+from collections.abc import Iterable
 from knx_stack.definition.knxnet_ip.tunneling.ack import Msg
 from knx_stack.definition.knxnet_ip import ErrorCodes
 

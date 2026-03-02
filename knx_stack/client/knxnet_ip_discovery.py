@@ -33,7 +33,6 @@ class Request(asyncio.DatagramProtocol):
 
 
         """
-        self._loop = asyncio.get_event_loop()
         self._transport = None
         self._local_addr = local_addr
         self._local_port = local_port
@@ -94,7 +93,8 @@ class Listen(asyncio.DatagramProtocol):
             handler = logging.StreamHandler(sys.stdout)
             root.addHandler(handler)
 
-            loop = asyncio.get_event_loop()
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
             transport1, _ = loop.run_until_complete(loop.create_task(listen_discovery_responses('172.31.10.111', 5544)))
             transport2, _ = loop.run_until_complete(loop.create_task(send_discovery_request('172.31.10.111', 5544)))
 
@@ -167,7 +167,8 @@ if __name__ == "__main__":
     handler = logging.StreamHandler(sys.stdout)
     root.addHandler(handler)
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
 
     if len(sys.argv):
         transport1, _ = loop.run_until_complete(

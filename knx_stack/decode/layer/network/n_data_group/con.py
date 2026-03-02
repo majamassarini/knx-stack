@@ -1,4 +1,5 @@
-from typing import Iterable, NamedTuple
+from collections.abc import Iterable
+from typing import NamedTuple
 from knx_stack.definition.layer import NSDU
 from knx_stack.decode.layer.transport.t_data_group import con
 

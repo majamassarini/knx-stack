@@ -1,6 +1,5 @@
-from typing import NamedTuple, Iterable
-
-
+from collections.abc import Iterable
+from typing import NamedTuple
 class GroupData(NamedTuple):
     asap: "knx_stack.ASAP"
     dpt: "knx_stack.datapointtypes.DPT"
