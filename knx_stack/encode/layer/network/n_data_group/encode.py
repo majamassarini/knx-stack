@@ -1,7 +1,12 @@
+from __future__ import annotations
 from knx_stack import Short, Octect, Msg
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
-def nl_encode(state: "knx_stack.State", msg: "knx_stack.Msg") -> "knx_stack.Msg":
+def nl_encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
     new_msg = msg
     for address in state.get_addresses():
         npdu_length = Octect(value=(len(msg) - 1))

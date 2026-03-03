@@ -1,13 +1,17 @@
-from typing import NamedTuple
+from __future__ import annotations
+from typing import TYPE_CHECKING, NamedTuple
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
 class Msg(NamedTuple):
-    asap: "knx_stack.ASAP"
+    asap: knx_stack.ASAP
     object_index: int
     property_id: int
     number_of_elements: int
     start_index: int
-    status: "knx_stack.layer.link.ConfirmFlag"
+    status: knx_stack.layer.link.ConfirmFlag
 
     def __repr__(self):
         return (

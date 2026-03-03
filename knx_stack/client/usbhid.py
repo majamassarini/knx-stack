@@ -3,6 +3,8 @@ import logging
 import knx_stack
 from collections.abc import Iterable
 from typing import NamedTuple
+
+
 class Client(object):
     """
     *A minimal asynchronous USB HID KNX Client*.
@@ -73,7 +75,9 @@ class Client(object):
         self.logger = logging.getLogger(__name__)
 
     async def _open_connection(self):
-        self.rsock, self.wsock = await asyncio.open_connection(self._ip, self._port)
+        self.rsock, self.wsock = await asyncio.open_connection(
+            self._ip, self._port
+        )
 
     async def _knx_write(self, msgs):
         for msg in msgs:
@@ -109,25 +113,29 @@ if __name__ == "__main__":
     handler = logging.StreamHandler(sys.stdout)
     root.addHandler(handler)
 
-    address_table = knx_stack.layer.AddressTable(knx_stack.Address(0x100A), [], 255)
+    address_table = knx_stack.layer.AddressTable(
+        knx_stack.Address(0x100A), [], 255
+    )
     association_table = knx_stack.layer.AssociationTable(address_table, {})
     asap_device = knx_stack.ASAP(1, "a floor light switch device")
     asap_command = knx_stack.ASAP(2, "turn on/off floor light")
-    association_table.associate(asap_device, [knx_stack.Address(0x1029)])
+    association_table.associate(asap_device, [knx_stack.Address(0x1029)])  # type: ignore[list-item]
     association_table.associate(
         asap_command, [knx_stack.GroupAddress(free_style=0x0F81)]
     )
     state = knx_stack.State(
         knx_stack.Medium.usb_hid,
         association_table,
-        knx_stack.GroupObjectTable({asap_command: knx_stack.datapointtypes.DPT_Switch}),
+        knx_stack.GroupObjectTable(
+            {asap_command: knx_stack.datapointtypes.DPT_Switch}
+        ),
     )
 
     msgs = list()
 
     switch_on = knx_stack.datapointtypes.DPT_Switch()
     switch_on.bits.action = knx_stack.datapointtypes.DPT_Switch.Action.on
-    msgs.append(
+    msgs.append(  # type: ignore[arg-type]
         knx_stack.layer.application.a_group_value_write.req.Msg(
             asap=asap_command, dpt=switch_on
         )
@@ -135,15 +143,15 @@ if __name__ == "__main__":
 
     switch_off = knx_stack.datapointtypes.DPT_Switch()
     switch_off.bits.action = knx_stack.datapointtypes.DPT_Switch.Action.off
-    msgs.append(
+    msgs.append(  # type: ignore[arg-type]
         knx_stack.layer.application.a_group_value_write.req.Msg(
             asap=asap_command, dpt=switch_off
         )
     )
 
-    msgs.append(
+    msgs.append(  # type: ignore[arg-type]
         knx_stack.layer.application.a_property_value_read.req.Msg(
-            asap=0,
+            asap=0,  # type: ignore[arg-type]
             object_index=0x01,
             property_id=0xC9,
             number_of_elements=1,

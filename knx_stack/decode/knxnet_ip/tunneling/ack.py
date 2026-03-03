@@ -1,10 +1,17 @@
+from __future__ import annotations
 import logging
-from collections.abc import Iterable
+
 from knx_stack.definition.knxnet_ip.tunneling.ack import Msg
 from knx_stack.definition.knxnet_ip import ErrorCodes
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
-def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
+def decode(
+    state: knx_stack.State, msg: knx_stack.Msg
+) -> tuple[list[knx_stack.knxnet_ip.tunneling.ack.Msg], knx_stack.State]:
     """
     >>> import knx_stack
     >>> address_table = knx_stack.AddressTable(0x0001, [], 255)
@@ -16,12 +23,17 @@ def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
     [TunnelingAck(sequence counter=1, status=0)]
     """
     (size, body) = msg.short()
-    (communication_channel_id, sequence_counter, status, body) = body.header()
+    (communication_channel_id, sequence_counter, status, body) = body.header()  # type: ignore[attr-defined]
     if state.sequence_counter_local == sequence_counter:
         state.sequence_counter_local += 1
     logging.getLogger(__name__).info(
-        "knxnet_ip.tunneling.decode.req sequence counter={}".format(sequence_counter)
+        "knxnet_ip.tunneling.decode.req sequence counter={}".format(
+            sequence_counter
+        )
     )
     return [
-        Msg(sequence_counter=state.sequence_counter_local, status=ErrorCodes(status))
+        Msg(
+            sequence_counter=state.sequence_counter_local,
+            status=ErrorCodes(status),
+        )
     ], state

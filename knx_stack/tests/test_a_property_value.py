@@ -12,9 +12,13 @@ class Test(unittest.TestCase):
         unittest.TestCase.setUp(self)
 
         self.msg = knx_stack.Msg.make_from_str(self.L_DATA_IND)
-        address_table = knx_stack.AddressTable(knx_stack.Address(0x102C), [], 255)
+        address_table = knx_stack.AddressTable(
+            knx_stack.Address(0x102C), [], 255
+        )
         association_table = knx_stack.AssociationTable(address_table, {})
-        self.state = knx_stack.State(knx_stack.Medium.usb_hid, association_table, {})
+        self.state = knx_stack.State(
+            knx_stack.Medium.usb_hid, association_table, {}
+        )
 
     def testencodeLDataReq(self):
         req_msg = knx_stack.layer.application.a_property_value_write.req.Msg(

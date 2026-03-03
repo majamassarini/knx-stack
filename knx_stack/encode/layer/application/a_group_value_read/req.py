@@ -1,12 +1,17 @@
+from __future__ import annotations
 from knx_stack import Msg as KnxMsg, Octect
 from knx_stack.definition import layer
 from knx_stack.encode.layer.transport.t_data_group import req
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
 def encode(
-    state: "knx_stack.State",
-    msg: "knx_stack.layer.application.a_group_value_read.req.Msg",
-) -> "knx_stack.Msg":
+    state: knx_stack.State,
+    msg: knx_stack.layer.application.a_group_value_read.req.Msg,
+) -> knx_stack.Msg:
     """
     >>> import knx_stack
     >>> asap = knx_stack.ASAP(1)
@@ -25,7 +30,7 @@ def encode(
     state.asap = msg.asap
     state.address_type = layer.AddressType.group
     ldata = layer.link.L_Data()
-    ldata.apci = apci
+    ldata.apci = apci  # type: ignore[misc]
     new_msg = KnxMsg([Octect(value=ldata.apci_value)])
     final_msg = req.encode(state, new_msg)
     return final_msg

@@ -1,11 +1,19 @@
+from __future__ import annotations
 import logging
 from collections.abc import Iterable
-from typing import NamedTuple
-from knx_stack.definition.knxnet_ip import HEADER_SIZE_10, KNXNETIP_VERSION_10, Services
+from typing import TYPE_CHECKING, NamedTuple
+from knx_stack.definition.knxnet_ip import (
+    HEADER_SIZE_10,
+    KNXNETIP_VERSION_10,
+    Services,
+)
 from knx_stack.decode.knxnet_ip import core, tunneling
 
+if TYPE_CHECKING:
+    import knx_stack
 
-def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTuple]:
+
+def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     """
     >>> import knx_stack
     >>> individual_address = knx_stack.Address(0x0001)
@@ -25,7 +33,7 @@ def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTupl
     (header, body) = msg.octect()
     (version, body) = body.octect()
     (service, body) = body.short()
-    result = []
+    result: Iterable[NamedTuple] = []
     if header.value == HEADER_SIZE_10 and version.value == KNXNETIP_VERSION_10:
         if service.value == Services.SEARCH_RESPONSE:
             result = core.search.res.decode(state, body)
@@ -40,7 +48,7 @@ def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTupl
         elif service.value == Services.TUNNELING_REQUEST:
             result = tunneling.req.decode(state, body)
         elif service.value == Services.TUNNELING_ACK:
-            result = tunneling.ack.decode(state, body)
+            result = tunneling.ack.decode(state, body)  # type: ignore[assignment]
         else:
             logging.getLogger(__name__).error(
                 "Unknown knxnet_ip service value %d" % service.value

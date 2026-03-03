@@ -1,11 +1,15 @@
+from __future__ import annotations
 from collections.abc import Iterable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 from knx_stack.definition.layer.transport.association_table import ASAP
 from knx_stack.definition.layer import PropertyServiceHeader
 
+if TYPE_CHECKING:
+    import knx_stack
+
 
 class PropertyData(NamedTuple):
-    asap: "knx_stack.ASAP"
+    asap: knx_stack.ASAP
     object_index: int
     property_id: int
     number_of_elements: int
@@ -13,7 +17,9 @@ class PropertyData(NamedTuple):
     data: int
 
 
-def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[PropertyData]:
+def decode(
+    state: knx_stack.State, msg: knx_stack.Msg
+) -> Iterable[PropertyData]:
     results = []
     propety_header, data = msg.long()
     header = PropertyServiceHeader()
@@ -26,7 +32,7 @@ def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[PropertyD
             property_id=header.bits.property_id,
             number_of_elements=header.bits.number_of_elements,
             start_index=header.bits.start_index,
-            data=data,
+            data=data,  # type: ignore[arg-type]
         )
     )
     return results

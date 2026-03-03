@@ -1,3 +1,10 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
+
+
 class GroupObjectTable:
     """
     A simplified version of a **Group Object Table** (4.11) with just an association between *ASAPs and Datapoint Types*.
@@ -28,11 +35,13 @@ class GroupObjectTable:
         return self._associations.items()
 
     def associate(
-        self, asap: "knx_stack.ASAP", datapointtype: "knx_stack.datapointtypes.DPT"
+        self,
+        asap: knx_stack.ASAP,
+        datapointtype: knx_stack.datapointtypes.DPT,
     ):
         self._associations[asap] = datapointtype
 
-    def disassociate(self, asap: "knx_stack.ASAP"):
+    def disassociate(self, asap: knx_stack.ASAP):
         del self._associations[asap]
 
     def __repr__(self, *args, **kwargs):

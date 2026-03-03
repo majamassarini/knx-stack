@@ -15,7 +15,11 @@ class Msg(Parent):
             (ipv4_udp, body) = body.octect()
             (ip, body) = body.long()
             (port, body) = body.short()
-            return (socket.inet_ntoa(struct.pack("!I", ip.value)), port.value, body)
+            return (
+                socket.inet_ntoa(struct.pack("!I", ip.value)),
+                port.value,
+                body,
+            )
         else:
             raise TypeError("No HPAI message")
 

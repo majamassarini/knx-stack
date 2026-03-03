@@ -1,12 +1,23 @@
+from __future__ import annotations
 from collections.abc import Iterable
-from knx_stack.definition.layer.application.a_group_value_response.con import Msg
+from knx_stack.definition.layer.application.a_group_value_response.con import (
+    Msg,
+)
 from knx_stack.decode.layer.application import a_group_value
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
-def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
+def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[Msg]:
     group_values = a_group_value.decode(state, msg)
     group_values_response = [
-        Msg(asap=group_value.asap, dpt=group_value.dpt, status=state.ldata.status)
+        Msg(
+            asap=group_value.asap,
+            dpt=group_value.dpt,
+            status=state.ldata.status,
+        )
         for group_value in group_values
     ]
     return group_values_response

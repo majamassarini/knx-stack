@@ -1,8 +1,15 @@
+from __future__ import annotations
 from collections.abc import Iterable
 from knx_stack.definition.knxnet_ip.core.connectionstate.res import Msg, Status
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
-def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
+def decode(
+    state: knx_stack.State, msg: knx_stack.Msg
+) -> Iterable[knx_stack.knxnet_ip.core.connectionstate.res.Msg]:
     """
     >>> import knx_stack
     >>> example = knx_stack.knxnet_ip.Msg.make_from_str("00087000")
@@ -13,7 +20,7 @@ def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
     >>> res
     [ConnectionstateRes(status=0)]
     """
-    result = []
+    result: list[knx_stack.knxnet_ip.core.connectionstate.res.Msg] = []
     (size, body) = msg.short()
     (communication_channel_id, body) = body.octect()
     (status, body) = body.octect()
