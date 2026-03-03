@@ -16,8 +16,8 @@ def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     the L_Data indication or L_Data confirmation decoder accordingly.
     """
     result: Iterable[NamedTuple] = []
-    (message_code, body) = msg.octect()
-    (additional_info_length, body) = body.octect()
+    message_code, body = msg.octect()
+    additional_info_length, body = body.octect()
     body = Msg(body[additional_info_length.value :])
 
     if message_code.value == MessageCode.L_Data_ind:

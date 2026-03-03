@@ -21,9 +21,9 @@ def decode(
     [DisconnectRes(communication_channel_id=5, status=0)]
     """
     result: list[knx_stack.knxnet_ip.core.disconnect.res.Msg] = []
-    (size, body) = msg.short()
-    (communication_channel_id, body) = body.octect()
-    (status, body) = body.octect()
+    size, body = msg.short()
+    communication_channel_id, body = body.octect()
+    status, body = body.octect()
     if status.value == ErrorCodes.E_NO_ERROR:
         state.communication_channel_id = 0  # type: ignore[attr-defined]
         result.append(

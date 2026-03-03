@@ -14,6 +14,6 @@ def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     Parses the L_Data fields from the message, stores the result in the state,
     and delegates to the link layer L_Data confirmation decoder.
     """
-    (data, body) = layer.link.L_Data.make_from(msg)
+    data, body = layer.link.L_Data.make_from(msg)
     state.ldata = data
     return l_data.con.decode(state, body)

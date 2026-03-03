@@ -21,8 +21,8 @@ def decode(
     [ConnectionstateRes(status=0)]
     """
     result: list[knx_stack.knxnet_ip.core.connectionstate.res.Msg] = []
-    (size, body) = msg.short()
-    (communication_channel_id, body) = body.octect()
-    (status, body) = body.octect()
+    size, body = msg.short()
+    communication_channel_id, body = body.octect()
+    status, body = body.octect()
     result.append(Msg(status=Status(status.value)))
     return result
