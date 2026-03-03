@@ -40,7 +40,7 @@ Summary:        %{summary}
 %pyproject_install
 
 %check
-%{python3} -m unittest
+%{python3} -m unittest discover -v
 
 %files -n python3-%{pypi_name}
 %license COPYING
