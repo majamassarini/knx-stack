@@ -13,7 +13,9 @@ class Test(unittest.TestCase):
 
         self.asap = knx_stack.ASAP(1)
         self.msg = knx_stack.Msg.make_from_str(self.L_DATA_IND)
-        address_table = knx_stack.AddressTable(knx_stack.Address(0x0001), [], 255)
+        address_table = knx_stack.AddressTable(
+            knx_stack.Address(0x0001), [], 255
+        )
         self.association_table = knx_stack.AssociationTable(address_table)
         self.association_table.associate(
             self.asap, [knx_stack.GroupAddress(free_style=0x0002)]

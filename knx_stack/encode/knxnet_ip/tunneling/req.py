@@ -1,11 +1,20 @@
+from __future__ import annotations
 import logging
 from knx_stack.msg import Short
-from knx_stack.definition.knxnet_ip import Msg as NetMsg, Services, HEADER_SIZE_10
+from knx_stack.definition.knxnet_ip import (
+    Msg as NetMsg,
+    Services,
+    HEADER_SIZE_10,
+)
 from knx_stack.encode.knxnet_ip import header
 from knx_stack.encode.knxnet_ip.tunneling import connection_header
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
-def encode(state: "knx_stack.State", msg: "knx_stack.Msg") -> "knx_stack.Msg":
+def encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
     """
     >>> import knx_stack
     >>> address_table = knx_stack.AddressTable(knx_stack.Address(0x1001), [], 255)
@@ -19,7 +28,9 @@ def encode(state: "knx_stack.State", msg: "knx_stack.Msg") -> "knx_stack.Msg":
     new_msg = NetMsg(Short(value=Services.TUNNELING_REQUEST.value).octects)
     new_msg += NetMsg(
         Short(
-            value=connection_header.CONNECTION_HEADER_LEN + HEADER_SIZE_10 + len(msg)
+            value=connection_header.CONNECTION_HEADER_LEN
+            + HEADER_SIZE_10
+            + len(msg)
         ).octects
     )
     new_msg += connection_header.create(

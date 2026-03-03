@@ -118,9 +118,11 @@ class Tunneling(asyncio.DatagramProtocol):
         for res in responses:
             if isinstance(res, knx_stack.knxnet_ip.core.connect.res.Msg):
                 self._state.sequence_counter_remote = 0
-                connectionstate_msg = knx_stack.knxnet_ip.core.connectionstate.req.Msg(
-                    addr_control_endpoint=self._local_addr,
-                    port_control_endpoint=self._local_port,
+                connectionstate_msg = (
+                    knx_stack.knxnet_ip.core.connectionstate.req.Msg(
+                        addr_control_endpoint=self._local_addr,
+                        port_control_endpoint=self._local_port,
+                    )
                 )
                 msg = knx_stack.encode_msg(self._state, connectionstate_msg)
                 self.send(msg)
@@ -130,7 +132,8 @@ class Tunneling(asyncio.DatagramProtocol):
                 self.logger.info("read {}".format(res))
                 if res.status == knx_stack.knxnet_ip.ErrorCodes.E_NO_ERROR:
                     tunneling_msg = knx_stack.knxnet_ip.tunneling.ack.Msg(
-                        sequence_counter=res.sequence_counter, status=res.status
+                        sequence_counter=res.sequence_counter,
+                        status=res.status,
                     )
                     msg = knx_stack.encode_msg(self._state, tunneling_msg)
                     self.send(msg)
@@ -181,7 +184,9 @@ if __name__ == "__main__":
     state = knx_stack.knxnet_ip.State(
         knx_stack.Medium.knxnet_ip,
         association_table,
-        knx_stack.GroupObjectTable({asap_command: knx_stack.datapointtypes.DPT_Switch}),
+        knx_stack.GroupObjectTable(
+            {asap_command: knx_stack.datapointtypes.DPT_Switch}
+        ),
     )
 
     msgs = list()
@@ -206,7 +211,9 @@ if __name__ == "__main__":
     asyncio.set_event_loop(loop)
     transport, protocol = loop.run_until_complete(
         loop.create_task(
-            start_tunneling("172.31.10.111", 5544, "172.31.10.250", 3671, state, msgs)
+            start_tunneling(
+                "172.31.10.111", 5544, "172.31.10.250", 3671, state, msgs
+            )
         )
     )
     loop.run_until_complete(loop.create_task(protocol.writer()))

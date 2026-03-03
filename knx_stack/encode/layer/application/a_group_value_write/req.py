@@ -1,11 +1,18 @@
+from __future__ import annotations
 from knx_stack.encode.layer.transport.t_data_group import req
-from knx_stack.encode.layer.application.a_group_value_write.encode import al_encode
+from knx_stack.encode.layer.application.a_group_value_write.encode import (
+    al_encode,
+)
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
 def encode(
-    state: "knx_stack.State",
-    msg: "knx_stack.layer.application.a_group_value_write.req.Msg",
-) -> "knx_stack.Msg":
+    state: knx_stack.State,
+    msg: knx_stack.layer.application.a_group_value_write.req.Msg,
+) -> knx_stack.Msg:
     """
     >>> import knx_stack
     >>> asap = knx_stack.ASAP(1)

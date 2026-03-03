@@ -1,13 +1,17 @@
+from __future__ import annotations
 import logging
 from collections.abc import Iterable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 from knx_stack.decode.layer import application
 
+if TYPE_CHECKING:
+    import knx_stack
 
-def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTuple]:
+
+def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     logger = logging.getLogger(__name__)
     tsap = state.get_tsap()
-    result = []
+    result: Iterable[NamedTuple] = []
     if tsap:
         if state.ldata.apci == 0:
             result = application.a_group_value_read.con.decode(state, msg)
@@ -18,7 +22,9 @@ def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTupl
         s = "received msg {} {}".format(msg, state.ldata)
         try:
             logger.debug(
-                "{} {} asaps {}".format(s, result[0].dpt, [m.asap for m in result])
+                "{} {} asaps {}".format(
+                    s, result[0].dpt, [m.asap for m in result]  # type: ignore[index,attr-defined]
+                )
             )
         except (AttributeError, IndexError):
             logger.debug("{} {}".format(s, result))

@@ -10,7 +10,9 @@ class Test(unittest.TestCase):
     def setUp(self):
         unittest.TestCase.setUp(self)
 
-        address_table = knx_stack.definition.AddressTable(knx_stack.Address(1), [], 255)
+        address_table = knx_stack.definition.AddressTable(
+            knx_stack.Address(1), [], 255
+        )
         self.association_table = knx_stack.AssociationTable(address_table)
         self.groupobject_table = knx_stack.GroupObjectTable()
         self.asap = knx_stack.ASAP(1, "prova")
@@ -74,14 +76,20 @@ class TestDPTValue(unittest.TestCase):
     L_DATA_NEG_TEMP_DPT2 = "0113150008000d010300002900bcd011fd0a0203008087d80000000000000000000000000000000000000000000000000000000000000000"
 
     def setUp(self):
-        address_table = knx_stack.AddressTable(knx_stack.Address(0x0001), [], 255)
+        address_table = knx_stack.AddressTable(
+            knx_stack.Address(0x0001), [], 255
+        )
         association_table = knx_stack.AssociationTable(address_table)
         asap = knx_stack.ASAP(1, "prova")
-        association_table.associate(asap, [knx_stack.GroupAddress(free_style=0x0A02)])
+        association_table.associate(
+            asap, [knx_stack.GroupAddress(free_style=0x0A02)]
+        )
         self.state = knx_stack.State(
             knx_stack.Medium.usb_hid,
             association_table,
-            knx_stack.GroupObjectTable({asap: knx_stack.datapointtypes.DPT_Value_Temp}),
+            knx_stack.GroupObjectTable(
+                {asap: knx_stack.datapointtypes.DPT_Value_Temp}
+            ),
         )
         self.msg = knx_stack.Msg.make_from_str(self.L_DATA_NEG_TEMP_DPT)
         self.msg2 = knx_stack.Msg.make_from_str(self.L_DATA_NEG_TEMP_DPT2)

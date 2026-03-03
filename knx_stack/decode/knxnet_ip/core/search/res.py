@@ -1,10 +1,17 @@
+from __future__ import annotations
 from collections.abc import Iterable
 import struct
 import socket
 from knx_stack.definition.knxnet_ip.core.search.res import Msg
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
-def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
+def decode(
+    state: knx_stack.State, msg: knx_stack.Msg
+) -> Iterable[knx_stack.knxnet_ip.core.search.res.Msg]:
     """
     >>> import knx_stack
     >>> example = knx_stack.Msg.make_from_str("004c0801ac1f0afa0e5736010200ffff00000001001e9a2e00000000000e8c000a8a495020496e74657266616365204e313438000000000000000000000000000802020103010401")
@@ -15,7 +22,7 @@ def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
     >>> res
     [SearchRes(ip=172.31.10.250, port=3671, individual address=0x0200)]
     """
-    result = []
+    result: list[knx_stack.knxnet_ip.core.search.res.Msg] = []
     (size, body) = msg.short()
     (struct_len, body) = body.octect()
     (ipv4_udp, body) = body.octect()
@@ -28,7 +35,7 @@ def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
         Msg(
             ip=socket.inet_ntoa(struct.pack("!I", ip.value)),
             port=port.value,
-            individual_address=individual_address,
+            individual_address=individual_address,  # type: ignore[arg-type]
         )
     )
     return result
