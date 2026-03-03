@@ -12,6 +12,11 @@ if TYPE_CHECKING:
 
 
 def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
+    """Decode the USB HID report header packet info field from raw message bytes.
+
+    Reads the packet info byte and data length, then delegates to the
+    protocol_version decoder for all-in-one packet frames.
+    """
     (packet_info_byte, body) = msg.octect()
     packet_type = packet_info_byte.nibble.low
     result: Iterable[NamedTuple] = []

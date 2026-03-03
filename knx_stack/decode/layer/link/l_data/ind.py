@@ -9,6 +9,12 @@ if TYPE_CHECKING:
 
 
 def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
+    """Decode an L_Data indication at the link layer from raw message bytes.
+
+    Inspects the address type in the decoded L_Data state and dispatches to
+    the appropriate network layer indication decoder (individual, group, or
+    broadcast).
+    """
     result: Iterable[NamedTuple] = []
     if state.ldata.address_type == AddressType.individual:
         result = network.n_data_individual.ind.decode(state, msg)

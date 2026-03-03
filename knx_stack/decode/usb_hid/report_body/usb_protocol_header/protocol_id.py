@@ -12,6 +12,11 @@ if TYPE_CHECKING:
 
 
 def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
+    """Decode the USB HID USB protocol header protocol identifier field from raw message bytes.
+
+    Reads the protocol ID byte and routes to either the cEMI EMI ID decoder for
+    KNX tunnel frames or the bus access server feature service identifier decoder.
+    """
     (head, body) = msg.octect()
     result: Iterable[NamedTuple] = []
     if head.value == ProtocolId.KNXTunnel:

@@ -99,33 +99,40 @@ class AddressTable(object):
 
     @property
     def individual_address(self) -> knx_stack.Address:
+        """Return the individual address of this device."""
         return self._individual_address
 
     @individual_address.setter
     def individual_address(self, ia: knx_stack.Address):
+        """Set the individual address of this device."""
         self._individual_address = ia
 
     @property
     def max_size(self) -> int:
+        """Return the maximum number of group addresses this table can hold."""
         return self._max_size
 
     @property
     def tsaps(self) -> Iterable[int]:
+        """Return all valid TSAP values, including TSAP 0 for the individual address."""
         return [tsap for tsap in range(0, (len(self._group_addresses) + 1))]
 
     @property
     def addresses(self) -> Iterable[knx_stack.GroupAddress]:
+        """Return the sorted list of group addresses."""
         return self._group_addresses
 
     def get_address(
         self, tsap: int
     ) -> "Union[knx_stack.Address, knx_stack.GroupAddress]":
+        """Return the address mapped to the given TSAP (0 returns the individual address)."""
         if tsap >= 1:
             return self._group_addresses[tsap - 1]
         else:
             return self._individual_address
 
     def get_tsap(self, address: knx_stack.GroupAddress) -> "Optional[int]":
+        """Return the TSAP for the given address, or None if it is not in the table."""
         try:
             return self._group_addresses.index(address) + 1
         except ValueError:
@@ -136,10 +143,9 @@ class AddressTable(object):
 
     def add(self, address: knx_stack.Address) -> None:
         """
-        Returns a new *Address Table* containing the given *group address*
+        Add the given group address to the table if not already present.
 
         :param address: a new *group address* to be inserted
-        :return: a new AddressTable instance
         """
         if (
             address not in self._group_addresses
@@ -160,10 +166,9 @@ class AddressTable(object):
 
     def remove(self, address: knx_stack.GroupAddress) -> None:
         """
-        Returns a new *Address Table* without the given *group address*
+        Remove the given group address from the table.
 
         :param address: a *group address* to be removed
-        :return: a new AddressTable instance
         """
         self._group_addresses.remove(address)
         self._group_addresses.sort(

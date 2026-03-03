@@ -20,6 +20,12 @@ class PropertyData(NamedTuple):
 def decode(
     state: knx_stack.State, msg: knx_stack.Msg
 ) -> Iterable[PropertyData]:
+    """Decode an A_PropertyValue application PDU from raw message bytes.
+
+    Parses the four-byte property service header and the following data bytes,
+    returning a PropertyData named tuple with the decoded object index, property
+    ID, element count, start index, and raw data value.
+    """
     results = []
     propety_header, data = msg.long()
     header = PropertyServiceHeader()

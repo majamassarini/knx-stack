@@ -8,22 +8,30 @@ if TYPE_CHECKING:
 
 
 class USB(Enum):
+    """USB connection status."""
+
     disconnected = 0
     connected = 1
 
 
 class BUS(Enum):
+    """KNX bus connection status."""
+
     disconnected = 0
     connected = 1
 
 
 class MODE(Enum):
+    """KNX device operating mode."""
+
     ldata = 0
     lraw = 1
     lbusmonitor = 2
 
 
 class Medium(Enum):
+    """KNX transport medium."""
+
     tp = 0
     usb_hid = 1
     knxnet_ip = 2
@@ -65,6 +73,7 @@ class State:
         association_table: knx_stack.AssociationTable,
         groupobject_table: knx_stack.GroupObjectTable,
     ):
+        """Initialise the state with a transport medium, association table, and group object table."""
         self._association_table = association_table
         self._groupobject_table = groupobject_table
         self._medium = medium
@@ -78,6 +87,7 @@ class State:
         self._sequence_counter_local = 0
 
     def __repr__(self, *args, **kwargs):
+        """Return a multi-line string summarising the current state."""
         s = """ State for %s\n
         %s\n
         %s\n
@@ -99,78 +109,97 @@ class State:
 
     @property
     def association_table(self):
+        """The association table mapping group addresses to ASAPs."""
         return self._association_table
 
     @property
     def datapointtypes(self):
+        """The group object table mapping ASAPs to datapoint types."""
         return self._groupobject_table
 
     @property
     def medium(self):
+        """The transport medium used by this state."""
         return self._medium
 
     @property
     def ldata(self):
+        """The last decoded L_Data frame, used by decode functions."""
         return self._ldata
 
     @ldata.setter
     def ldata(self, value):
+        """Set the current L_Data frame."""
         self._ldata = value
 
     @property
     def asap(self):
+        """The Application Service Access Point used for encoding."""
         return self._asap
 
     @asap.setter
     def asap(self, value):
+        """Set the ASAP used for encoding."""
         self._asap = value
 
     @property
     def apci(self):
+        """The Application Protocol Control Information value."""
         return self._apci
 
     @apci.setter
     def apci(self, value):
+        """Set the APCI value."""
         self._apci = value
 
     @property
     def address_type(self):
+        """The address type (group or individual) for the current operation."""
         return self._address_type
 
     @address_type.setter
     def address_type(self, value):
+        """Set the address type."""
         self._address_type = value
 
     @property
     def sequence_counter_remote(self):
+        """The remote sequence counter, wrapping at 256."""
         return self._sequence_counter_remote
 
     @sequence_counter_remote.setter
     def sequence_counter_remote(self, value):
+        """Set the remote sequence counter (wraps at 256)."""
         self._sequence_counter_remote = value % 256
 
     @property
     def sequence_counter_local(self):
+        """The local sequence counter, wrapping at 256."""
         return self._sequence_counter_local
 
     @sequence_counter_local.setter
     def sequence_counter_local(self, value):
+        """Set the local sequence counter (wraps at 256)."""
         self._sequence_counter_local = value % 256
 
     @property
     def individual_address(self):
+        """The individual address of the local KNX device."""
         return self._association_table.individual_address
 
     def get_tsap(self):
+        """Return the TSAP corresponding to the destination address in the current L_Data frame."""
         return self._association_table.get_tsap(
             Address(self._ldata.destination)
         )
 
     def get_asaps(self):
+        """Return the list of ASAPs associated with the destination address in the current L_Data frame."""
         tsap = self.get_tsap()
         return self._association_table.get_asaps(tsap)
 
     def get_asaps_and_dpts(self):
+        """Return a list of (ASAP, datapoint type) pairs for the current destination address."""
         asaps = set(self.get_asaps())
         associations = [
             (asap, dpt)
@@ -180,11 +209,14 @@ class State:
         return associations
 
     def get_tsaps(self):
+        """Return the list of TSAPs associated with the current ASAP."""
         return self._association_table.get_tsaps(self._asap)
 
     def get_addresses(self):
+        """Return the list of group addresses associated with the current ASAP."""
         tsaps = self.get_tsaps()
         return self._association_table.get_addresses(tsaps)
 
     def get_dpt(self):
+        """Return the datapoint type associated with the current ASAP."""
         return self._groupobject_table._associations[self._asap]

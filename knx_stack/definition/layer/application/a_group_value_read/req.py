@@ -6,6 +6,8 @@ if TYPE_CHECKING:
 
 
 class Msg(NamedTuple):
+    """GroupValueRead request message."""
+
     asap: knx_stack.ASAP
 
     def __repr__(self):

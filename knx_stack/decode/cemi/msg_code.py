@@ -10,6 +10,11 @@ if TYPE_CHECKING:
 
 
 def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
+    """Decode the cEMI message code field from raw message bytes.
+
+    Reads the message code byte and additional info, then delegates to either
+    the L_Data indication or L_Data confirmation decoder accordingly.
+    """
     result: Iterable[NamedTuple] = []
     (message_code, body) = msg.octect()
     (additional_info_length, body) = body.octect()

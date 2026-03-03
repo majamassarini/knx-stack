@@ -87,6 +87,7 @@ class Tunneling(asyncio.DatagramProtocol):
         self.logger = logging.getLogger(__name__)
 
     def connection_made(self, transport):
+        """Store the transport and send an initial KNXnet/IP connect request."""
         self._transport = transport
         self.logger.info("Connection made: {}".format(str(self._transport)))
 
@@ -100,18 +101,22 @@ class Tunneling(asyncio.DatagramProtocol):
         self.send(msg)
 
     def connection_lost(self, exc):
+        """Log the error and clear the stored transport when the connection is lost."""
         self.logger.error("Connection lost: {}".format(str(exc)))
         self._transport = None
 
     def error_received(self, exc):
+        """Log any transport-level error received from the remote end."""
         self.logger.error("Error received: {}".format(str(exc)))
 
     def send(self, msg):
+        """Send an encoded KNX message to the remote KNXnet/IP gateway."""
         self._transport.sendto(
             bytearray.fromhex(str(msg)), (self._remote_addr, self._remote_port)
         )
 
     def datagram_received(self, data, addr):
+        """Decode an incoming datagram and respond to connect and tunneling messages."""
         responses = knx_stack.decode_msg(
             self._state, knx_stack.knxnet_ip.Msg.make_from_str(data.hex())
         )
@@ -139,6 +144,7 @@ class Tunneling(asyncio.DatagramProtocol):
                     self.send(msg)
 
     async def writer(self):
+        """Wait for the connection to be established, then send all queued messages."""
         while not self.connected:
             await asyncio.sleep(1)
         for msg in self._msgs:
@@ -157,6 +163,7 @@ async def start_tunneling(
     state: knx_stack.knxnet_ip.State,
     msgs: Iterable[NamedTuple],
 ):
+    """Create a UDP datagram endpoint and return a connected Tunneling transport/protocol pair."""
     transport, protocol = await loop.create_datagram_endpoint(
         lambda: Tunneling(
             local_addr, local_port, remote_addr, remote_port, state, msgs
