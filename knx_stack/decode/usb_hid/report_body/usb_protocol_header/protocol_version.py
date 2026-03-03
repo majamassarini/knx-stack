@@ -16,7 +16,7 @@ def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     Validates the protocol version byte and, if it matches the expected KNX USB
     transfer protocol version, delegates to the header_length decoder.
     """
-    (head, body) = msg.octect()
+    head, body = msg.octect()
     result: Iterable[NamedTuple] = []
     if head.value == KNX_USB_TRANSFER_PROTOCOL:
         result = header_length.decode(state, body)

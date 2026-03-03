@@ -52,6 +52,14 @@ line-length = 79
 
 [tool.flake8]
 max-line-length = 79
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    "venv",
+    "*.egg-info",
+]
 extend-ignore = [
     # whitespace before ':' – black formats slices this way
     "E203",

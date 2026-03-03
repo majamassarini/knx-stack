@@ -21,7 +21,7 @@ def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     >>> data
     []
     """
-    (head, body) = msg.octect()
+    head, body = msg.octect()
     result: Iterable[NamedTuple] = []
     if head.value == KNX_DATA_EXCHANGE:
         result = packet_info.decode(state, body)

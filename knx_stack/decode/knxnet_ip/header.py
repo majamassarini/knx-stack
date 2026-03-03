@@ -30,9 +30,9 @@ def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     >>> data
     [TunnelingReq(sequence counter=1, status=<ErrorCodes.E_NO_ERROR: 0>), GroupValueWriteInd (DPT_Switch {'action': 'off'} for asap 1 (an application service access point to 0xABCD))]
     """
-    (header, body) = msg.octect()
-    (version, body) = body.octect()
-    (service, body) = body.short()
+    header, body = msg.octect()
+    version, body = body.octect()
+    service, body = body.short()
     result: Iterable[NamedTuple] = []
     if header.value == HEADER_SIZE_10 and version.value == KNXNETIP_VERSION_10:
         if service.value == Services.SEARCH_RESPONSE:

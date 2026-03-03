@@ -21,12 +21,12 @@ def decode(
     [DisconnectReq (control endpoint = 127.0.0.1:1234)]
     """
     result: list[knx_stack.knxnet_ip.core.disconnect.req.Msg] = []
-    (size, body) = msg.short()
-    (communication_channel_id, body) = body.octect()
-    (reserved, body) = body.octect()
+    size, body = msg.short()
+    communication_channel_id, body = body.octect()
+    reserved, body = body.octect()
 
     # Decode HPAI (Host Protocol Address Information)
-    (ip, port, body) = body.HPAI()  # type: ignore[attr-defined]
+    ip, port, body = body.HPAI()  # type: ignore[attr-defined]
 
     result.append(
         Msg(
