@@ -67,6 +67,8 @@ extend-ignore = [
     "W503",
     # line too long – black handles code; doctest strings can't be wrapped
     "E501",
+    # doc line too long – doctest results can exceed any reasonable limit
+    "W505",
     # undefined name in string annotations (forward references)
     "F821",
 ]
