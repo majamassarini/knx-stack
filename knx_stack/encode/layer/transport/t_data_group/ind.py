@@ -8,6 +8,11 @@ if TYPE_CHECKING:
 
 
 def encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
+    """Encode a T_Data_Group indication at the transport layer into raw message bytes.
+
+    Applies transport-layer group data encoding, then delegates to the network
+    layer N_Data_Group indication encoder.
+    """
     new_msg = tl_encode(state, msg)
     final_msg = ind.encode(state, new_msg)
     return final_msg

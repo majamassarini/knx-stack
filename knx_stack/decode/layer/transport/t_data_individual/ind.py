@@ -9,6 +9,12 @@ if TYPE_CHECKING:
 
 
 def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
+    """Decode a T_Data_Individual indication at the transport layer from raw message bytes.
+
+    Checks that the source address matches the association table's individual
+    address, then dispatches to the appropriate application layer property value
+    indication decoder based on the APCI value.
+    """
     logger = logging.getLogger(__name__)
     result: Iterable[NamedTuple] = []
     if (

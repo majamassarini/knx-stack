@@ -41,10 +41,12 @@ encode_mapping = {
 
 
 def encode_msg(state_, msg_):
+    """Encode a message to its raw byte representation using the registered encoder for the message type."""
     return encode_mapping[msg_.__class__](state_, msg_)
 
 
 def decode_msg(state_, msg_):
+    """Decode a raw byte message into a list of application-layer messages based on the transport medium."""
     if state_.medium == Medium.usb_hid:
         return decode.usb_hid.report_header.report_identifier.decode(
             state_, msg_

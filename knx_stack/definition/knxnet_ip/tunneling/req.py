@@ -6,6 +6,8 @@ if TYPE_CHECKING:
 
 
 class Msg(NamedTuple):
+    """KNXnet/IP tunneling request message."""
+
     sequence_counter: int
     status: knx_stack.knxnet_ip.ErrorCodes
 

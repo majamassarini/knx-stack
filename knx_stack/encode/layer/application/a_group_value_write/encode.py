@@ -15,6 +15,11 @@ def al_encode(
         knx_stack.layer.application.a_group_value_write.ind.Msg,
     ],
 ) -> knx_stack.Msg:
+    """Encode an A_GroupValue_Write PDU at the application layer into raw message bytes.
+
+    Serialises the DPT value and APCI byte for a group value write service,
+    handling sub-byte, one-byte, two-byte, and four-byte DPT sizes.
+    """
     apci = 0x80
     state.asap = msg.asap
     state.apci = apci

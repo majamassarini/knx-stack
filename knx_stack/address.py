@@ -2,6 +2,8 @@ from ctypes import c_uint8, c_uint16, LittleEndianStructure, Union
 
 
 class ThreeLevelStyle(LittleEndianStructure):
+    """KNX group address in three-level style (main/middle/sub)."""
+
     _fields_ = [
         ("sub", c_uint8, 8),
         ("middle", c_uint8, 3),
@@ -10,6 +12,8 @@ class ThreeLevelStyle(LittleEndianStructure):
 
 
 class TwoLevelStyle(LittleEndianStructure):
+    """KNX group address in two-level style (main/sub)."""
+
     _fields_ = [
         ("sub", c_uint16, 11),
         ("main", c_uint16, 5),
@@ -18,7 +22,7 @@ class TwoLevelStyle(LittleEndianStructure):
 
 class Address(Union):
     """
-    A wrapper to c_uint16.
+    A 16-bit address wrapper.
 
     A common representation for both *individual addresses* and *group addresses*.
 
@@ -33,15 +37,18 @@ class Address(Union):
     ]
 
     def __repr__(self, *args, **kwargs):
+        """Return the address as a zero-padded 4-digit hex string."""
         return "0x%04X" % (self.free_style)
 
     def __eq__(self, other):
+        """Compare two addresses by their free-style value."""
         try:
             return self.free_style == other.free_style
         except AttributeError as e:
             raise e
 
     def __hash__(self):
+        """Hash the address using its free-style value."""
         return self.free_style
 
 
@@ -80,6 +87,7 @@ class GroupAddress(Union):
     ]
 
     def __repr__(self, *args, **kwargs):
+        """Return the address in free-style, two-level, and three-level formats."""
         return "(0x%04X %d/%d %d/%d/%d)" % (
             self.free_style,
             self.two_level_style.main,
@@ -90,10 +98,12 @@ class GroupAddress(Union):
         )
 
     def __eq__(self, other):
+        """Compare two group addresses by their free-style value."""
         try:
             return self.free_style == other.free_style
         except AttributeError as e:
             raise e
 
     def __hash__(self):
+        """Hash the group address using its free-style value."""
         return self.free_style

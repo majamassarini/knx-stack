@@ -30,11 +30,13 @@ class Msg(list):
 
     @classmethod
     def make_from_str(cls, msg: str) -> Msg:
+        """Create a Msg from a hex string, converting each pair of characters to an Octect."""
         octects = cls.stringtooctects(msg)
         return cls(octects)
 
     @staticmethod
     def stringtooctects(msg: str) -> Iterable[Octect]:
+        """Convert a hex string to a list of Octect instances."""
         high_nibbles = [
             int(nibble, 16)
             for index, nibble in enumerate(msg)
@@ -86,6 +88,7 @@ class Msg(list):
         return long, self.__class__(self[4:])
 
     def __repr__(self, *args, **kwargs):
+        """Return the message bytes as an uppercase hex string."""
         s = ""
         for o in self:
             s += "%02X" % o.value
@@ -93,6 +96,8 @@ class Msg(list):
 
 
 class Nibbles(LittleEndianStructure):
+    """A byte split into two 4-bit nibbles (high and low)."""
+
     _fields_ = [("low", c_uint8, 4), ("high", c_uint8, 4)]
 
 
@@ -115,10 +120,13 @@ class Octect(Union):
     _fields_ = [("nibble", Nibbles), ("value", c_uint8)]
 
     def __repr__(self, *args, **kwargs):
+        """Return the byte value as a zero-padded 2-digit hex string."""
         return "0x%02X" % self.value
 
 
 class Bytes(LittleEndianStructure):
+    """A 16-bit value split into LSB and MSB bytes."""
+
     _fields_ = [("LSB", c_uint8, 8), ("MSB", c_uint8, 8)]
 
 
@@ -146,21 +154,27 @@ class Short(Union):
 
     @property
     def MSB(self) -> Octect:
+        """Return the most significant byte as an Octect."""
         return Octect(value=self.byte.MSB)
 
     @property
     def LSB(self) -> Octect:
+        """Return the least significant byte as an Octect."""
         return Octect(value=self.byte.LSB)
 
     @property
     def octects(self) -> Iterable[Octect]:
+        """Return both bytes as a list [MSB, LSB]."""
         return [self.MSB, self.LSB]
 
     def __repr__(self, *args, **kwargs):
+        """Return the value as a zero-padded 4-digit hex string."""
         return "0x%04X" % self.value
 
 
 class LBytes(LittleEndianStructure):
+    """A 32-bit value split into four bytes (B1-B4)."""
+
     _fields_ = [
         ("B1", c_uint32, 8),
         ("B2", c_uint32, 8),
@@ -189,23 +203,29 @@ class Long(Union):
 
     @property
     def B1(self) -> Octect:
+        """Return byte 1 (least significant) as an Octect."""
         return Octect(value=self.byte.B1)
 
     @property
     def B2(self) -> Octect:
+        """Return byte 2 as an Octect."""
         return Octect(value=self.byte.B2)
 
     @property
     def B3(self) -> Octect:
+        """Return byte 3 as an Octect."""
         return Octect(value=self.byte.B3)
 
     @property
     def B4(self) -> Octect:
+        """Return byte 4 (most significant) as an Octect."""
         return Octect(value=self.byte.B4)
 
     @property
     def octects(self) -> Iterable[Octect]:
+        """Return all four bytes as a list [B4, B3, B2, B1]."""
         return [self.B4, self.B3, self.B2, self.B1]
 
     def __repr__(self, *args, **kwargs):
+        """Return the value as a zero-padded 8-digit hex string."""
         return "0x%08X" % self.value

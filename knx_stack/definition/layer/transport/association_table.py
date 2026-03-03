@@ -33,15 +33,18 @@ class ASAP:
     """
 
     def __init__(self, value: int, name: str = None):
+        """Initialise the ASAP with an integer identifier and an optional descriptive name."""
         self._value = value
         self._name = name
 
     @property
     def value(self):
+        """Return the integer identifier of this ASAP."""
         return self._value
 
     @property
     def name(self):
+        """Return the optional descriptive name of this ASAP."""
         return self._name
 
     def __repr__(self, *args, **kwargs):
@@ -124,6 +127,7 @@ class AssociationTable(object):
         address_table: knx_stack.AddressTable,
         associations: Iterable["Association"] = None,
     ):
+        """Initialise with an address table and an optional list of initial associations."""
         self._address_table = address_table
         self._asap_addresses: dict = dict()
         self._tsap_asaps: dict = dict()
@@ -137,12 +141,15 @@ class AssociationTable(object):
 
     @property
     def individual_address(self) -> knx_stack.Address:
+        """Return the individual address of the underlying address table."""
         return self._address_table.individual_address
 
     def get_tsap(self, address: knx_stack.GroupAddress) -> int:
+        """Return the TSAP for the given group address."""
         return self._address_table.get_tsap(address)
 
     def get_tsaps(self, asap: knx_stack.ASAP) -> Iterable[int]:
+        """Return all TSAPs associated with the given ASAP."""
         tsaps = [
             self.get_tsap(address)
             for address in self._asap_addresses[asap]
@@ -151,19 +158,23 @@ class AssociationTable(object):
         return tsaps
 
     def get_asaps(self, tsap: int) -> Iterable[knx_stack.ASAP]:
+        """Return all ASAPs associated with the given TSAP."""
         return self._tsap_asaps[tsap]
 
     def get_asaps_from_address(
         self, address: knx_stack.GroupAddress
     ) -> Iterable[knx_stack.ASAP]:
+        """Return all ASAPs associated with the given group address."""
         tsap = self._address_table.get_tsap(address)
         return self._tsap_asaps[tsap]
 
     @property
     def asaps(self):
+        """Return all ASAPs registered in this association table."""
         return self._asap_addresses.keys()
 
     def get_free_asap_value(self):
+        """Return the lowest unused ASAP integer value."""
         asaps = self._asap_addresses.keys()
         for e, asap in enumerate(asaps):
             if e != asap.value:
@@ -171,6 +182,7 @@ class AssociationTable(object):
         return len(asaps)
 
     def get_addresses(self, tsaps: Iterable[int]):
+        """Return the addresses corresponding to the given list of TSAPs."""
         addresses = list()
         for tsap in tsaps:
             addresses.append(self._address_table.get_address(tsap))
@@ -190,6 +202,7 @@ class AssociationTable(object):
         asap: knx_stack.ASAP,
         addresses: Iterable[knx_stack.GroupAddress],
     ) -> None:
+        """Associate an ASAP with one or more group addresses, adding them to the address table as needed."""
         for address in addresses:
             if (
                 address not in self._address_table.addresses
@@ -209,6 +222,7 @@ class AssociationTable(object):
         asap: knx_stack.ASAP,
         addresses: Iterable[knx_stack.GroupAddress],
     ) -> None:
+        """Remove the association between an ASAP and the given group addresses."""
         for address in addresses:
             if address != self.individual_address:
                 self._address_table.remove(address)

@@ -8,4 +8,8 @@ if TYPE_CHECKING:
 
 
 def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
+    """Decode an N_Data_Broadcast indication at the network layer from raw message bytes.
+
+    Delegates directly to the transport layer T_Data_Broadcast indication decoder.
+    """
     return ind.decode(state, msg)

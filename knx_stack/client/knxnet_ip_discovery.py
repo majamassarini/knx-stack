@@ -7,32 +7,35 @@ import knx_stack
 
 
 class Request(asyncio.DatagramProtocol):
+    """
+    A KNXnet/IP Discovery request service.
+
+    Sends a KNXnet/IP search request to the multicast group and logs any
+    search responses that arrive on the same socket.
+
+    :param local_addr: host IP address used as the discovery request source
+    :param local_port: UDP port bound to the discovery request socket
+
+    Example::
+
+        async def send_discovery_request(local_addr: str, local_port: int):
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.bind(('', knx_stack.knxnet_ip.DISCOVERY_MULTICAST_PORT))
+            group = socket.inet_aton(knx_stack.knxnet_ip.DISCOVERY_MULTICAST_ADDR)
+            mreq = struct.pack('!4sL', group, socket.INADDR_ANY)
+            sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+            sock.setblocking(False)
+
+            transport, protocol = await loop.create_datagram_endpoint(
+                lambda: Request(local_addr, local_port), sock=sock,
+            )
+            return transport, protocol
+
+    """
+
     def __init__(self, local_addr: str, local_port: int):
-        """
-        A KNXnet IP Discovery request service
-
-        :param local_addr: discovery request instance host ip address
-        :param local_port: discovery request instance binding port
-
-        Example::
-
-            async def send_discovery_request(local_addr: str, local_port: int):
-                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                sock.bind(('', knx_stack.knxnet_ip.DISCOVERY_MULTICAST_PORT))
-                group = socket.inet_aton(knx_stack.knxnet_ip.DISCOVERY_MULTICAST_ADDR)
-                mreq = struct.pack('!4sL', group, socket.INADDR_ANY)
-                sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-                sock.setblocking(False)
-
-                transport, protocol = await loop.create_datagram_endpoint(
-                    lambda: Request(local_addr, local_port), sock=sock,
-                )
-                return transport, protocol
-
-
-        """
         self._transport = None
         self._local_addr = local_addr
         self._local_port = local_port
@@ -43,6 +46,7 @@ class Request(asyncio.DatagramProtocol):
         self.logger = logging.getLogger(__name__)
 
     def connection_made(self, transport):
+        """Store the transport and immediately transmit a KNXnet/IP search request."""
         self._transport = transport
         self.logger.info("Connection made: {}".format(str(self._transport)))
         msg = knx_stack.encode_msg(
@@ -61,23 +65,29 @@ class Request(asyncio.DatagramProtocol):
         )
 
     def connection_lost(self, exc):
+        """Log the error and clear the stored transport when the connection is lost."""
         self.logger.error("Connection lost: {}".format(str(exc)))
         self._transport = None
 
     def error_received(self, exc):
+        """Log any transport-level error received from the remote end."""
         self.logger.error("Error received: {}".format(str(exc)))
 
     def datagram_received(self, data, addr):
+        """Log the raw datagram payload and its source address."""
         self.logger.info("read data:    {}".format(data.hex()))
         self.logger.info("read from:    {}".format(str(addr)))
 
 
 class Listen(asyncio.DatagramProtocol):
     """
-    A KNXnet IP Discovery listener service
+    A KNXnet/IP Discovery listener service.
 
-    :param local_addr: discovery listener instance host ip address
-    :param local_port: discovery listener instance binding port
+    Listens on a dedicated UDP endpoint for KNXnet/IP search responses and
+    decodes each incoming datagram using the KNX stack.
+
+    :param local_addr: host IP address bound to the discovery listener socket
+    :param local_port: UDP port bound to the discovery listener socket
 
     Example::
 
@@ -119,17 +129,21 @@ class Listen(asyncio.DatagramProtocol):
         self.logger = logging.getLogger(__name__)
 
     def connection_made(self, transport):
+        """Store the transport once the UDP endpoint is ready."""
         self._transport = transport
         self.logger.info("Connection made: {}".format(str(self._transport)))
 
     def connection_lost(self, exc):
+        """Log the error and clear the stored transport when the connection is lost."""
         self.logger.error("Connection lost: {}".format(str(exc)))
         self._transport = None
 
     def error_received(self, exc):
+        """Log any transport-level error received from the remote end."""
         self.logger.error("Error received: {}".format(str(exc)))
 
     def datagram_received(self, data, addr):
+        """Decode and log an incoming KNXnet/IP search response datagram."""
         self.logger.info("read    {}".format(str(data.hex())))
         self.logger.info("read    {}".format(str(addr)))
         search_response = knx_stack.decode_msg(
@@ -139,6 +153,7 @@ class Listen(asyncio.DatagramProtocol):
 
 
 async def send_discovery_request(local_addr: str, local_port: int):
+    """Create a multicast UDP socket and return a Request transport/protocol pair."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(("", knx_stack.knxnet_ip.DISCOVERY_MULTICAST_PORT))
     group = socket.inet_aton(knx_stack.knxnet_ip.DISCOVERY_MULTICAST_ADDR)
@@ -156,6 +171,7 @@ async def send_discovery_request(local_addr: str, local_port: int):
 
 
 async def listen_discovery_responses(local_addr: str, local_port: int):
+    """Create a UDP endpoint and return a Listen transport/protocol pair."""
     transport, protocol = await loop.create_datagram_endpoint(
         lambda: Listen(),
         local_addr=(local_addr, local_port),

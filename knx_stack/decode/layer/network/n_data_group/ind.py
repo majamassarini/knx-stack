@@ -9,6 +9,11 @@ if TYPE_CHECKING:
 
 
 def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
+    """Decode an N_Data_Group indication at the network layer from raw message bytes.
+
+    Checks that the NSDU field indicates a T_Data_Group PDU and then delegates
+    to the transport layer T_Data_Group indication decoder.
+    """
     if state.ldata.nsdu == NSDU.T_Data_Group_PDU:
         return ind.decode(state, msg)
     return []

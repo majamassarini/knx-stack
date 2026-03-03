@@ -11,6 +11,11 @@ if TYPE_CHECKING:
 
 
 def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
+    """Decode the USB HID USB protocol header protocol version field from raw message bytes.
+
+    Validates the protocol version byte and, if it matches the expected KNX USB
+    transfer protocol version, delegates to the header_length decoder.
+    """
     (head, body) = msg.octect()
     result: Iterable[NamedTuple] = []
     if head.value == KNX_USB_TRANSFER_PROTOCOL:
