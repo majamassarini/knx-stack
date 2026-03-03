@@ -31,6 +31,8 @@ dev = [
     "black",
     "mypy",
     "coverage",
+]
+docs = [
     "sphinx",
     "sphinx-rtd-theme",
 ]
