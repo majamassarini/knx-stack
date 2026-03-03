@@ -1,4 +1,11 @@
+from __future__ import annotations
 from collections.abc import Iterable
+from typing import TYPE_CHECKING, Optional, Union
+
+if TYPE_CHECKING:
+    import knx_stack
+
+
 class AddressTableException(Exception):
     """Max entries already written inside address table"""
 
@@ -74,8 +81,8 @@ class AddressTable(object):
 
     def __init__(
         self,
-        ia: "knx_stack.Address",
-        addresses: Iterable["knx_stack.GroupAddress"],
+        ia: knx_stack.Address,
+        addresses: Iterable[knx_stack.GroupAddress],
         max_size: int,
     ):
         """
@@ -86,14 +93,16 @@ class AddressTable(object):
         self._max_size = max_size
         self._individual_address = ia
         self._group_addresses = list(addresses)
-        self._group_addresses.sort(key=lambda group_address: group_address.free_style)
+        self._group_addresses.sort(
+            key=lambda group_address: group_address.free_style
+        )
 
     @property
-    def individual_address(self) -> "knx_stack.Address":
+    def individual_address(self) -> knx_stack.Address:
         return self._individual_address
 
     @individual_address.setter
-    def individual_address(self, ia: "knx_stack.Address"):
+    def individual_address(self, ia: knx_stack.Address):
         self._individual_address = ia
 
     @property
@@ -105,16 +114,18 @@ class AddressTable(object):
         return [tsap for tsap in range(0, (len(self._group_addresses) + 1))]
 
     @property
-    def addresses(self) -> Iterable["knx_stack.GroupAddress"]:
+    def addresses(self) -> Iterable[knx_stack.GroupAddress]:
         return self._group_addresses
 
-    def get_address(self, tsap: int) -> int:
+    def get_address(
+        self, tsap: int
+    ) -> "Union[knx_stack.Address, knx_stack.GroupAddress]":
         if tsap >= 1:
             return self._group_addresses[tsap - 1]
         else:
             return self._individual_address
 
-    def get_tsap(self, address: "knx_stack.GroupAddress") -> int:
+    def get_tsap(self, address: knx_stack.GroupAddress) -> "Optional[int]":
         try:
             return self._group_addresses.index(address) + 1
         except ValueError:
@@ -123,20 +134,23 @@ class AddressTable(object):
             else:
                 return None
 
-    def add(self, address: "knx_stack.Address") -> "knx_stack.AddressTable":
+    def add(self, address: knx_stack.Address) -> None:
         """
         Returns a new *Address Table* containing the given *group address*
 
         :param address: a new *group address* to be inserted
         :return: a new AddressTable instance
         """
-        if address not in self._group_addresses or address != self._individual_address:
+        if (
+            address not in self._group_addresses
+            or address != self._individual_address
+        ):
             if len(self._group_addresses) >= self.max_size:
                 raise AddressTableException(
                     "Max entries %d, already written inside address table"
                     % self.max_size
                 )
-            self._group_addresses.append(address)
+            self._group_addresses.append(address)  # type: ignore[arg-type]
             try:
                 self._group_addresses.sort(
                     key=lambda group_address: group_address.free_style
@@ -144,7 +158,7 @@ class AddressTable(object):
             except AttributeError as e:
                 raise e
 
-    def remove(self, address: "knx_stack.GroupAddress") -> "knx_stack.AddressTable":
+    def remove(self, address: knx_stack.GroupAddress) -> None:
         """
         Returns a new *Address Table* without the given *group address*
 
@@ -152,7 +166,9 @@ class AddressTable(object):
         :return: a new AddressTable instance
         """
         self._group_addresses.remove(address)
-        self._group_addresses.sort(key=lambda group_address: group_address.free_style)
+        self._group_addresses.sort(
+            key=lambda group_address: group_address.free_style
+        )
 
     def __repr__(self, *args, **kwargs):
         s = """AddressTable: individual address: {}, max_size={}\n\n""".format(

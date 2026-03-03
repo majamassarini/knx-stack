@@ -1,10 +1,14 @@
+from __future__ import annotations
 from collections.abc import Iterable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 from knx_stack.definition.usb_hid import KNX_DATA_EXCHANGE
 from knx_stack.decode.usb_hid.report_header import packet_info
 
+if TYPE_CHECKING:
+    import knx_stack
 
-def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTuple]:
+
+def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     """
     >>> import knx_stack
     >>> individual_address = knx_stack.Address(0x0001)
@@ -18,7 +22,7 @@ def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTupl
     []
     """
     (head, body) = msg.octect()
-    result = []
+    result: Iterable[NamedTuple] = []
     if head.value == KNX_DATA_EXCHANGE:
         result = packet_info.decode(state, body)
     return result

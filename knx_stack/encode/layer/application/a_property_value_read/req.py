@@ -1,12 +1,17 @@
+from __future__ import annotations
 from knx_stack import Msg as KnxMsg, Octect, Long
 from knx_stack.definition import layer
 from knx_stack.encode.layer.transport.t_data_individual import req
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
 def encode(
-    state: "knx_stack.State",
-    msg: "knx_stack.layer.application.a_property_value_read.req.Msg",
-) -> "knx_stack.Msg":
+    state: knx_stack.State,
+    msg: knx_stack.layer.application.a_property_value_read.req.Msg,
+) -> knx_stack.Msg:
     """
     >>> import knx_stack
     >>> asap = knx_stack.ASAP(0)
@@ -24,7 +29,7 @@ def encode(
     state.apci = apci
     state.address_type = layer.AddressType.individual
     ldata = layer.L_Data()
-    ldata.apci = apci
+    ldata.apci = apci  # type: ignore[misc]
     header = layer.PropertyServiceHeader()
     header.bits.object_index = msg.object_index
     header.bits.property_id = msg.property_id
@@ -32,6 +37,6 @@ def encode(
     header.bits.start_index = msg.start_index
     along = Long()
     along.value = header.value
-    new_msg = KnxMsg([Octect(value=ldata.apci)] + along.octects)
+    new_msg = KnxMsg([Octect(value=ldata.apci)] + along.octects)  # type: ignore[operator]
     final_msg = req.encode(state, new_msg)
     return final_msg

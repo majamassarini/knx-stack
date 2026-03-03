@@ -1,10 +1,17 @@
+from __future__ import annotations
 from knx_stack import Msg
 from knx_stack import Octect
 from knx_stack.definition.cemi import EMIId
-from knx_stack.encode.usb_hid.report_body.usb_protocol_header import protocol_id
+from knx_stack.encode.usb_hid.report_body.usb_protocol_header import (
+    protocol_id,
+)
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
-def encode(state: "knx_stack.State", msg: "knx_stack.Msg") -> "knx_stack.Msg":
+def encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
     emi_id = Octect(value=EMIId.commonEmi)
     emi_id_a = Octect(value=0)
     emi_id_b = Octect(value=0)

@@ -4,7 +4,7 @@ import socket
 from knx_stack import Msg
 
 
-class Msg(Msg):
+class Msg(Msg):  # type: ignore[no-redef]
     def HPAI(self):
         """
         Host protocol address information
@@ -13,7 +13,11 @@ class Msg(Msg):
         (ipv4_udp, body) = body.octect()
         (ip, body) = body.long()
         (port, body) = body.short()
-        return (socket.inet_ntoa(struct.pack("!I", ip.value)), port.value, body)
+        return (
+            socket.inet_ntoa(struct.pack("!I", ip.value)),
+            port.value,
+            body,
+        )
 
     def CRI(self):
         """

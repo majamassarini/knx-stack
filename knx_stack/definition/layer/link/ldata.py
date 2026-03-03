@@ -205,7 +205,7 @@ class L_Data(LittleEndianStructure):
     def tpci(self):
         return self._tpci.value
 
-    @apci.setter
+    @apci.setter  # type: ignore[misc,no-redef,attr-defined]
     def apci(self, value):
         self._tpci.bits.ack_nack = value >> 8
         self._apci.value = value
@@ -369,11 +369,14 @@ class L_Data(LittleEndianStructure):
         return l_data, new_msg
 
     def __repr__(self, *args, **kwargs):
-        s = """source: %d (0x%04X), destination: %d (0x%04X), address_type: %s""" % (
-            self.source,
-            self.source,
-            self.destination,
-            self.destination,
-            self.address_type,
+        s = (
+            """source: %d (0x%04X), destination: %d (0x%04X), address_type: %s"""
+            % (
+                self.source,
+                self.source,
+                self.destination,
+                self.destination,
+                self.address_type,
+            )
         )
         return s

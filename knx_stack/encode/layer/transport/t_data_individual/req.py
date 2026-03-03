@@ -1,14 +1,19 @@
+from __future__ import annotations
 from knx_stack import Msg, Octect
 from knx_stack.definition import layer
 from knx_stack.encode.layer.network.n_data_individual import req
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
-def encode(state: "knx_stack.State", msg: "knx_stack.Msg") -> "knx_stack.Msg":
+def encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
     final_msg = msg
     ldata = layer.L_Data()
     if state.address_type == layer.AddressType.individual:
         ldata.nsdu = layer.NSDU.T_Data_Individual_PDU
-        ldata.apci = state.apci
+        ldata.apci = state.apci  # type: ignore[misc]
         new_msg = Msg([Octect(value=ldata.tpci)] + msg)
         final_msg = req.encode(state, new_msg)
     return final_msg

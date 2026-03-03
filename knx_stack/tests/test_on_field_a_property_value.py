@@ -3,7 +3,9 @@ import knx_stack
 
 if __name__ == "__main__":
     address_table = knx_stack.definition.AddressTable(0x102D, [], 255)
-    association_table = knx_stack.definition.AssociationTable(address_table, {})
+    association_table = knx_stack.definition.AssociationTable(
+        address_table, {}
+    )
     new_association_table = association_table.associate(0x210F, 1)
     new_association_table = new_association_table.associate(0x211D, 2)
     new_association_table = new_association_table.associate(0x2120, 3)
@@ -143,11 +145,13 @@ if __name__ == "__main__":
 
     for msg in msgs:
         if isinstance(
-            msg, knx_stack.encode.layer.application.a_property_value_write.req.Msg
+            msg,
+            knx_stack.encode.layer.application.a_property_value_write.req.Msg,
         ):
             final_msg = knx_stack.encode_msg(state, msg)
         elif isinstance(
-            msg, knx_stack.encode.layer.application.a_property_value_read.req.Msg
+            msg,
+            knx_stack.encode.layer.application.a_property_value_read.req.Msg,
         ):
             final_msg = knx_stack.encode_msg(state, msg)
         else:

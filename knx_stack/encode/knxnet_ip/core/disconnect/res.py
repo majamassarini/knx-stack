@@ -1,11 +1,21 @@
+from __future__ import annotations
 from knx_stack import Octect, Short
-from knx_stack.definition.knxnet_ip import Msg as NetMsg, Services, HEADER_SIZE_10
+from knx_stack.definition.knxnet_ip import (
+    Msg as NetMsg,
+    Services,
+    HEADER_SIZE_10,
+)
 from knx_stack.encode.knxnet_ip import header
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
 def encode(
-    state: "knx_stack.State", msg: "knx_stack.knxnet_ip.core.disconnect.res.Msg"
-) -> "knx_stack.Msg":
+    state: knx_stack.State,
+    msg: knx_stack.knxnet_ip.core.disconnect.res.Msg,
+) -> knx_stack.Msg:
     """
     >>> import knx_stack
     >>> state = knx_stack.knxnet_ip.State(knx_stack.Medium.knxnet_ip, None, None)
@@ -20,6 +30,8 @@ def encode(
     """
     new_msg = NetMsg(Short(value=Services.DISCONNECT_RESPONSE.value).octects)
     new_msg += NetMsg(Short(value=(2 + HEADER_SIZE_10)).octects)
-    new_msg += NetMsg([Octect(value=msg.communication_channel_id), Octect(value=msg.status)])
+    new_msg += NetMsg(
+        [Octect(value=msg.communication_channel_id), Octect(value=msg.status)]
+    )
     final_msg = header.encode(state, new_msg)
     return final_msg

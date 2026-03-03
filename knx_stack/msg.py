@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from ctypes import c_uint8, LittleEndianStructure, Union, c_uint16, c_uint32
 from collections.abc import Iterable
 
@@ -27,16 +29,20 @@ class Msg(list):
     """
 
     @classmethod
-    def make_from_str(cls, msg: str) -> "knx_stack.Msg":
+    def make_from_str(cls, msg: str) -> Msg:
         octects = cls.stringtooctects(msg)
         return cls(octects)
 
     @staticmethod
-    def stringtooctects(msg: str) -> Iterable["knx_stack.msg.Octect"]:
+    def stringtooctects(msg: str) -> Iterable[Octect]:
         high_nibbles = [
-            int(nibble, 16) for index, nibble in enumerate(msg) if not index % 2
+            int(nibble, 16)
+            for index, nibble in enumerate(msg)
+            if not index % 2
         ]
-        low_nibbles = [int(nibble, 16) for index, nibble in enumerate(msg) if index % 2]
+        low_nibbles = [
+            int(nibble, 16) for index, nibble in enumerate(msg) if index % 2
+        ]
         return list(
             map(
                 lambda high_nibble, low_nibble: Octect(
@@ -47,7 +53,7 @@ class Msg(list):
             )
         )
 
-    def octect(self) -> tuple["knx_stack.msg.Octect", "knx_stack.Msg"]:
+    def octect(self) -> tuple[Octect, Msg]:
         """
         Consumes an Octect from the message's byte list
 
@@ -55,7 +61,7 @@ class Msg(list):
         """
         return self[0], self.__class__(self[1:])
 
-    def short(self) -> tuple["knx_stack.msg.Short", "knx_stack.Msg"]:
+    def short(self) -> tuple[Short, Msg]:
         """
         Consumes a Short from the message's byte list
 
@@ -66,7 +72,7 @@ class Msg(list):
         short.byte.LSB = self[1].value
         return short, self.__class__(self[2:])
 
-    def long(self) -> tuple["knx_stack.msg.Long", "knx_stack.Msg"]:
+    def long(self) -> tuple[Long, Msg]:
         """
         Consumes a Long from the message's byte list
 
@@ -139,15 +145,15 @@ class Short(Union):
     _fields_ = [("byte", Bytes), ("value", c_uint16)]
 
     @property
-    def MSB(self) -> "knx_stack.msg.Octect":
+    def MSB(self) -> Octect:
         return Octect(value=self.byte.MSB)
 
     @property
-    def LSB(self) -> "knx_stack.msg.Octect":
+    def LSB(self) -> Octect:
         return Octect(value=self.byte.LSB)
 
     @property
-    def octects(self) -> Iterable["knx_stack.msg.Octect"]:
+    def octects(self) -> Iterable[Octect]:
         return [self.MSB, self.LSB]
 
     def __repr__(self, *args, **kwargs):
@@ -182,23 +188,23 @@ class Long(Union):
     _fields_ = [("byte", LBytes), ("value", c_uint32)]
 
     @property
-    def B1(self) -> "knx_stack.msg.Octect":
+    def B1(self) -> Octect:
         return Octect(value=self.byte.B1)
 
     @property
-    def B2(self) -> "knx_stack.msg.Octect":
+    def B2(self) -> Octect:
         return Octect(value=self.byte.B2)
 
     @property
-    def B3(self) -> "knx_stack.msg.Octect":
+    def B3(self) -> Octect:
         return Octect(value=self.byte.B3)
 
     @property
-    def B4(self) -> "knx_stack.msg.Octect":
+    def B4(self) -> Octect:
         return Octect(value=self.byte.B4)
 
     @property
-    def octects(self) -> Iterable["knx_stack.msg.Octect"]:
+    def octects(self) -> Iterable[Octect]:
         return [self.B4, self.B3, self.B2, self.B1]
 
     def __repr__(self, *args, **kwargs):

@@ -1,3 +1,4 @@
+from __future__ import annotations
 import socket
 
 from knx_stack import Octect, Short
@@ -9,11 +10,15 @@ from knx_stack.definition.knxnet_ip import (
 )
 from knx_stack.encode.knxnet_ip import header
 from knx_stack.encode.knxnet_ip.core import hpai
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
 def encode(
-    state: "knx_stack.State", msg: "knx_stack.knxnet_ip.core.connect.req.Msg"
-) -> "knx_stack.Msg":
+    state: knx_stack.State, msg: knx_stack.knxnet_ip.core.connect.req.Msg
+) -> knx_stack.Msg:
     """
     Build the host protocol address information: HPAI and services related header bytes
     >>> import knx_stack
@@ -29,14 +34,18 @@ def encode(
     ip_control_endpoint = socket.inet_aton(msg.addr_control_endpoint)
     ip_data_endpoint = socket.inet_aton(msg.addr_data_endpoint)
     cri_len = 4
-    hpai_control_endpoint = hpai.create(ip_control_endpoint, msg.port_control_endpoint)
+    hpai_control_endpoint = hpai.create(
+        ip_control_endpoint, msg.port_control_endpoint
+    )
     hpai_data_endpoint = hpai.create(ip_data_endpoint, msg.port_data_endpoint)
     cri = NetMsg([Octect(value=cri_len)])
     cri += NetMsg([Octect(value=ConnectionTypes.TUNNEL_CONNECTION)])
     cri += NetMsg([Octect(value=2)])  # tunnel link layer
     cri += NetMsg([Octect(value=0)])  # reserved
     new_msg = NetMsg(Short(value=Services.CONNECT_REQUEST.value).octects)
-    new_msg += NetMsg(Short(value=cri_len + (hpai.LENGTH * 2) + HEADER_SIZE_10).octects)
+    new_msg += NetMsg(
+        Short(value=cri_len + (hpai.LENGTH * 2) + HEADER_SIZE_10).octects
+    )
     new_msg += hpai_control_endpoint
     new_msg += hpai_data_endpoint
     new_msg += cri

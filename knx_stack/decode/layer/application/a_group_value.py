@@ -1,11 +1,17 @@
+from __future__ import annotations
 from collections.abc import Iterable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
+
+if TYPE_CHECKING:
+    import knx_stack
+
+
 class GroupData(NamedTuple):
-    asap: "knx_stack.ASAP"
-    dpt: "knx_stack.datapointtypes.DPT"
+    asap: knx_stack.ASAP
+    dpt: knx_stack.datapointtypes.DPT
 
 
-def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[GroupData]:
+def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[GroupData]:
     associations = []
     for asap, dpt in state.get_asaps_and_dpts():
         data = dpt()
