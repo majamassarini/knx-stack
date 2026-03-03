@@ -3,6 +3,8 @@ from enum import IntEnum
 
 
 class Status(IntEnum):
+    """KNXnet/IP connection-state response status codes."""
+
     E_NO_ERROR = 0x00
     E_CONNECTION_ID = 0x21  # no active connection id
     E_DATA_CONNECTION = 0x26  # data error in connection id
@@ -10,6 +12,8 @@ class Status(IntEnum):
 
 
 class Msg(NamedTuple):
+    """KNXnet/IP connection-state response message."""
+
     status: "Status"
 
     def __repr__(self):

@@ -11,6 +11,11 @@ if TYPE_CHECKING:
 
 
 def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
+    """Decode the USB HID bus access server feature service identifier from raw message bytes.
+
+    Reads the service ID byte and, for DeviceFeatureInfo or DeviceFeatureResponse
+    services, delegates to the feature_identifier decoder.
+    """
     (head, msg) = msg.octect()
     result: Iterable[NamedTuple] = []
     if head.value == ServiceId.DeviceFeatureInfo:

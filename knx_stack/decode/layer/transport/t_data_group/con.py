@@ -9,6 +9,11 @@ if TYPE_CHECKING:
 
 
 def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
+    """Decode a T_Data_Group confirmation at the transport layer from raw message bytes.
+
+    Looks up the TSAP from the state and dispatches to the appropriate application
+    layer group value confirmation decoder based on the APCI value.
+    """
     logger = logging.getLogger(__name__)
     tsap = state.get_tsap()
     result: Iterable[NamedTuple] = []

@@ -25,6 +25,7 @@ class GroupObjectTable:
     """
 
     def __init__(self, associations: dict = None):
+        """Initialise with an optional pre-populated associations dictionary."""
         if associations:
             self._associations = associations
         else:
@@ -32,6 +33,7 @@ class GroupObjectTable:
 
     @property
     def associations(self):
+        """Return the ASAP-to-datapoint-type association pairs."""
         return self._associations.items()
 
     def associate(
@@ -39,12 +41,15 @@ class GroupObjectTable:
         asap: knx_stack.ASAP,
         datapointtype: knx_stack.datapointtypes.DPT,
     ):
+        """Associate an ASAP with a datapoint type."""
         self._associations[asap] = datapointtype
 
     def disassociate(self, asap: knx_stack.ASAP):
+        """Remove the association for the given ASAP."""
         del self._associations[asap]
 
     def __repr__(self, *args, **kwargs):
+        """Return a multi-line string listing all ASAP-to-datapoint-type associations."""
         s = "GroupObjectTable: ASAP -> datapointtype\n"
         for asap, datapointtype in self._associations.items():
             s += "    {} -> {}\n".format(asap, datapointtype.__name__)

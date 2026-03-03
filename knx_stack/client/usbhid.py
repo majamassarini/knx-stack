@@ -17,7 +17,7 @@ class Client(object):
     ``# knxstack-usbhid-daemon --dev-hidraw /dev/hidrawX``
 
     :param ip: str, host where knxstack-usbhid-daemon is running
-    :param port: int, port where knxstack-usbhid-daemon is binded (5555 by default)
+    :param port: int, port where knxstack-usbhid-daemon is bound (5555 by default)
     :param state: knx_stack.State, setup of all needed KNX tables
     :param send_msgs: a list of messages to be sent on KNX bus
 
@@ -102,6 +102,7 @@ class Client(object):
         return msg.decode()[0:-1]
 
     def run(self):
+        """Start the event loop and process KNX read/write tasks until all messages are sent."""
         self.loop.run_forever()
 
 

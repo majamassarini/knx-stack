@@ -10,6 +10,12 @@ if TYPE_CHECKING:
 
 
 def encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
+    """Encode a cEMI L_Data request into raw message bytes.
+
+    Prepends the L_Data.req message code and an additional-info length of zero,
+    then routes to the USB HID or KNXnet/IP tunneling encoder depending on the
+    medium stored in the state.
+    """
     message_code = Octect(value=MessageCode.L_Data_req)
     additional_info_length = Octect(value=0)
     new_msg = Msg([message_code, additional_info_length] + msg)

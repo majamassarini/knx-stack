@@ -6,6 +6,8 @@ if TYPE_CHECKING:
 
 
 class Msg(NamedTuple):
+    """PropertyValueWrite request message."""
+
     asap: knx_stack.ASAP
     object_index: int
     property_id: int

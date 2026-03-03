@@ -6,6 +6,8 @@ if TYPE_CHECKING:
 
 
 class Msg(NamedTuple):
+    """GroupValueWrite confirmation message."""
+
     asap: knx_stack.ASAP
     dpt: knx_stack.datapointtypes.DPT
     status: knx_stack.layer.link.ConfirmFlag

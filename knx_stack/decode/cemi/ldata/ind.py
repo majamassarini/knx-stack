@@ -9,6 +9,11 @@ if TYPE_CHECKING:
 
 
 def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
+    """Decode a cEMI L_Data indication from raw message bytes and update the state.
+
+    Parses the L_Data fields from the message, stores the result in the state,
+    and delegates to the link layer L_Data indication decoder.
+    """
     (data, body) = layer.L_Data.make_from(msg)
     state.ldata = data
     return l_data.ind.decode(state, body)

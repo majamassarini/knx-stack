@@ -18,6 +18,8 @@ if TYPE_CHECKING:
 
 
 class DPT_Factory(object):
+    """Factory class for creating DPT instances by name."""
+
     @staticmethod
     def make(dpt: str, fields_values: dict) -> knx_stack.datapointtypes.DPT:
         """
@@ -53,6 +55,8 @@ class DPT_Factory(object):
 
 
 class Description_Factory(object):
+    """Factory class for building a (name, fields) description tuple from a DPT instance."""
+
     @staticmethod
     def make(dpt):
         """
@@ -113,6 +117,8 @@ class DPT(object):
     """
 
     class Length(Enum):
+        """Enum describing whether a DPT value fits in less than a byte or requires a byte or more."""
+
         LESS_THAN_A_BYTE = "less_than_a_byte"
         A_BYTE_OR_MORE = "a_byte_or_more"
 
@@ -146,15 +152,19 @@ class DPT_Switch(Union, DPT):
     length = DPT.Length.LESS_THAN_A_BYTE
 
     class Action(IntEnum):
+        """Enum for switch state: off or on."""
+
         off = (0x00,)
         on = (0x01,)
 
     @property
     def action(self):
+        """Return the current action."""
         return self.Action(self.bits.action)
 
     @action.setter
     def action(self, value):
+        """Set the action by name string."""
         value = getattr(self.Action, value)
         self.bits.action = self.Action(value)
 
@@ -179,6 +189,8 @@ class DPT_Alarm(DPT_Switch, DPT):
     length = DPT.Length.LESS_THAN_A_BYTE
 
     class Action(IntEnum):
+        """Enum for alarm state: no_alarm or alarm."""
+
         no_alarm = (0x00,)
         alarm = (0x01,)
 
@@ -208,15 +220,19 @@ class DPT_UpDown(Union, DPT):
     length = DPT.Length.LESS_THAN_A_BYTE
 
     class Direction(IntEnum):
+        """Enum for movement direction: up or down."""
+
         up = (0x00,)
         down = (0x01,)
 
     @property
     def direction(self):
+        """Return the current direction."""
         return self.Direction(self.bits.direction)
 
     @direction.setter
     def direction(self, value):
+        """Set the direction by name string."""
         value = getattr(self.Direction, value)
         self.bits.direction = self.Direction(value)
 
@@ -246,15 +262,19 @@ class DPT_Start(Union, DPT):
     length = DPT.Length.LESS_THAN_A_BYTE
 
     class Action(IntEnum):
+        """Enum for start/stop action: stop or start."""
+
         stop = (0x00,)
         start = (0x01,)
 
     @property
     def action(self):
+        """Return the current action."""
         return self.Action(self.bits.action)
 
     @action.setter
     def action(self, value):
+        """Set the action by name string."""
         value = getattr(self.Action, value)
         self.bits.action = self.Action(value)
 
@@ -262,6 +282,8 @@ class DPT_Start(Union, DPT):
 
 
 class DPT_Info_Switch(DPT_Switch):
+    """A read-only switch status DPT, identical in encoding to DPT_Switch."""
+
     pass
 
 
@@ -285,6 +307,8 @@ class DPTVimarScene(Union, DPT):
     """
 
     class Command(IntEnum):
+        """Enum for Vimar scene commands: attiva, cancella, memorizza, identifica."""
+
         attiva = (0x00,)
         cancella = (0x01,)
         memorizza = (0x02,)
@@ -292,19 +316,23 @@ class DPTVimarScene(Union, DPT):
 
     @property
     def command(self):
+        """Return the current scene command."""
         return self.Command(self.bits.command)
 
     @command.setter
     def command(self, value):
+        """Set the scene command by name string."""
         value = getattr(self.Command, value)
         self.bits.command = self.Command(value)
 
     @property
     def index(self):
+        """Return the scene index."""
         return self.bits.index
 
     @index.setter
     def index(self, value):
+        """Set the scene index."""
         self.bits.index = value
 
     _fields_ = [("bits", _DPTVimarScene), ("value", c_uint8)]
@@ -333,24 +361,30 @@ class DPT_SceneControl(Union, DPT):
     """
 
     class Command(IntEnum):
+        """Enum for scene control commands: activate or learn."""
+
         activate = (0x00,)
         learn = (0x01,)
 
     @property
     def command(self):
+        """Return the current scene command."""
         return self.Command(self.bits.command)
 
     @command.setter
     def command(self, value):
+        """Set the scene command by name string."""
         value = getattr(self.Command, value)
         self.bits.command = self.Command(value)
 
     @property
     def number(self):
+        """Return the scene number."""
         return self.bits.number
 
     @number.setter
     def number(self, value):
+        """Set the scene number."""
         self.bits.number = value
 
     _fields_ = [("bits", _DPT_SceneControl), ("value", c_uint8)]
@@ -376,23 +410,29 @@ class DPT_Control_Dimming(Union, DPT):
     """
 
     class Direction(IntEnum):
+        """Enum for dimming direction: down or up."""
+
         down = (0x00,)
         up = (0x01,)
 
     @property
     def step(self):
+        """Return the dimming step size (0-7)."""
         return self.bits.step
 
     @step.setter
     def step(self, value):
+        """Set the dimming step size."""
         self.bits.step = value
 
     @property
     def direction(self):
+        """Return the dimming direction."""
         return self.Direction(self.bits.direction)
 
     @direction.setter
     def direction(self, value):
+        """Set the dimming direction by name string."""
         value = getattr(self.Direction, value)
         self.bits.direction = self.Direction(value)
 
@@ -442,6 +482,8 @@ class DPTSetupClima(Union, DPT):
     """
 
     class Funzionamento(IntEnum):
+        """Enum for HVAC operating mode (Italian)."""
+
         off = 0x00
         forced_off = 0x01
         off_a_tempo = 0x02
@@ -455,86 +497,108 @@ class DPTSetupClima(Union, DPT):
         automatico_invio_temperatura_disabilitato = 0x0E
 
     class Stagione(IntEnum):
+        """Enum for HVAC season: inverno (winter) or estate (summer)."""
+
         inverno = 0x00
         estate = 0x01
 
     class UnitaMisura(IntEnum):
+        """Enum for temperature unit: celsius or farenheit."""
+
         celsius = 0x00
         farenheit = 0x01
 
     @property
     def funzionamento(self):
+        """Return the current operating mode."""
         return self.Funzionamento(self.bits.funzionamento)
 
     @funzionamento.setter
     def funzionamento(self, value):
+        """Set the operating mode by name string."""
         value = getattr(self.Funzionamento, value)
         self.bits.funzionamento = self.Funzionamento(value)
 
     @property
     def stagione(self):
+        """Return the current season setting."""
         return self.Stagione(self.bits.stagione)
 
     @stagione.setter
     def stagione(self, value):
+        """Set the season by name string."""
         value = getattr(self.Stagione, value)
         self.bits.stagione = self.Stagione(value)
 
     @property
     def unita_misura(self):
+        """Return the temperature unit."""
         return self.UnitaMisura(self.bits.unita_misura)
 
     @unita_misura.setter
     def unita_misura(self, value):
+        """Set the temperature unit by name string."""
         value = getattr(self.UnitaMisura, value)
         self.bits.unita_misura = self.UnitaMisura(value)
 
     @property
     def centralizzato(self):
+        """Return the centralised control flag."""
         return self.bits.centralizzato
 
     @centralizzato.setter
     def centralizzato(self, value):
+        """Set the centralised control flag."""
         self.bits.centralizzato = value
 
     @property
     def terziario(self):
+        """Return the tertiary mode flag."""
         return self.bits.terziario
 
     @terziario.setter
     def terziario(self, value):
+        """Set the tertiary mode flag."""
         self.bits.terziario = value
 
     @property
     def setpoint(self):
+        """Return the setpoint value."""
         return self.bits.setpoint
 
     @setpoint.setter
     def setpoint(self, value):
+        """Set the setpoint value."""
         self.bits.setpoint = value
 
     @property
     def differenziale(self):
+        """Return the differential value."""
         return self.bits.differenziale
 
     @differenziale.setter
     def differenziale(self, value):
+        """Set the differential value."""
         self.bits.differenziale = value
 
     @property
     def temporizzazione(self):
+        """Return the timer setting."""
         return self.bits.temporizzazione
 
     @temporizzazione.setter
     def temporizzazione(self, value):
+        """Set the timer value."""
         self.bits.temporizzazione = value
 
     @property
     def variazione_setpoint(self):
+        """Return the setpoint variation."""
         return self.bits.variazione_setpoint
 
     @variazione_setpoint.setter
     def variazione_setpoint(self, value):
+        """Set the setpoint variation."""
         self.bits.variazione_setpoint = value
 
     _fields_ = [("bits", _DPTSetupClima), ("value", c_uint32)]
@@ -573,38 +637,46 @@ class DPTInfoClimaReport(Union, DPT):
 
     @property
     def funzionamento(self):
+        """Return the current operating mode."""
         return self.Funzionamento(self.bits.funzionamento)
 
     @funzionamento.setter
     def funzionamento(self, value):
+        """Set the operating mode by name string."""
         value = getattr(self.Funzionamento, value)
         self.bits.funzionamento = self.Funzionamento(value)
 
     @property
     def stagione(self):
+        """Return the current season setting."""
         return self.Stagione(self.bits.stagione)
 
     @stagione.setter
     def stagione(self, value):
+        """Set the season by name string."""
         value = getattr(self.Stagione, value)
         self.bits.stagione = self.Stagione(value)
 
     @property
     def setpoint(self):
+        """Return the setpoint value."""
         return self.bits.setpoint
 
     @setpoint.setter
     def setpoint(self, value):
+        """Set the setpoint value."""
         self.bits.setpoint = value
 
     @property
     def temperatura(self):
+        """Return the temperature in degrees (tenths stored internally)."""
         return (
             (self.bits.temperatura_msb << 8) + self.bits.temperatura_lsb
         ) / 10
 
     @temperatura.setter
     def temperatura(self, value):
+        """Set the temperature in degrees."""
         self.bits.temperatura_msb = int((value * 10)) >> 8
         self.bits.temperatura_lsb = int((value * 10))
 
@@ -680,6 +752,7 @@ class DPT_Float_16(Union):
     length = DPT.Length.A_BYTE_OR_MORE
 
     def decode(self):
+        """Decode the 16-bit KNX floating-point value to a Python float."""
         mantissa = (
             self.bits.mantissa
             if self.bits.sign == 1
@@ -691,6 +764,7 @@ class DPT_Float_16(Union):
         return decoded_data
 
     def encode(self, value):
+        """Encode a Python float to the 16-bit KNX floating-point format."""
         sign = math.copysign(1, value)
 
         decimal_mantissa = decimal.Decimal(
@@ -721,6 +795,7 @@ class DPT_Float_16(Union):
         return comp_two
 
     def __repr__(self):
+        """Return a string representation with the decoded float value."""
         DPT = {"decoded_value": self.decode()}
         return self.__class__.__name__ + ": " + str(DPT)
 
@@ -790,12 +865,15 @@ class DPT_Float_32(Union):
     length = DPT.Length.A_BYTE_OR_MORE
 
     def decode(self):
+        """Decode the 32-bit IEEE 754 float value."""
         return self.bits
 
     def encode(self, value):
+        """Encode a Python float as a 32-bit IEEE 754 value."""
         self.bits = value
 
     def __repr__(self):
+        """Return a string representation with the decoded float value."""
         DPT = {"decoded_value": self.decode()}
         return self.__class__.__name__ + ": " + str(DPT)
 

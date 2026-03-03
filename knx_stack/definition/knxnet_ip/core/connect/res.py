@@ -7,6 +7,8 @@ if TYPE_CHECKING:
 
 
 class Status(IntEnum):
+    """KNXnet/IP connect response status codes."""
+
     E_NO_ERROR = 0x00
     E_CONNECTION_TYPE = 0x22  # connection type not supported
     E_CONNECTION_OPTION = 0x23  # connection option not supported
@@ -14,6 +16,8 @@ class Status(IntEnum):
 
 
 class Msg(NamedTuple):
+    """KNXnet/IP connect response message."""
+
     ip: str
     port: int
     individual_address: knx_stack.Address

@@ -31,6 +31,8 @@ dev = [
     "black",
     "mypy",
     "coverage",
+    "sphinx",
+    "sphinx-rtd-theme",
 ]
 
 [project.urls]

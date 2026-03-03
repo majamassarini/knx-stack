@@ -9,6 +9,11 @@ if TYPE_CHECKING:
 
 
 def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
+    """Decode the cEMI EMI identifier field from raw USB HID message bytes.
+
+    Validates the EMI ID byte (must be cEMI) and the following two-byte reserved
+    field before delegating to the msg_code decoder.
+    """
     result: Iterable[NamedTuple] = []
     (head, msg) = msg.octect()
     if head.value == EMIId.commonEmi:
