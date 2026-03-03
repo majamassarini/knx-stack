@@ -10,6 +10,11 @@ if TYPE_CHECKING:
 
 
 def encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
+    """Encode the USB HID USB protocol header body length field into raw message bytes.
+
+    Calculates and prepends the two-byte body length (excluding the four-byte
+    fixed header fields) to the message, then delegates to the header_length encoder.
+    """
     length = len(msg) - 4
     body_length = Short(value=length)
     new_msg = Msg([body_length.MSB, body_length.LSB] + msg)

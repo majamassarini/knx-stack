@@ -12,6 +12,11 @@ if TYPE_CHECKING:
 
 
 def encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
+    """Encode the USB HID EMI identifier field into raw message bytes.
+
+    Prepends the cEMI identifier and two reserved zero bytes to the message,
+    then delegates to the protocol_id encoder.
+    """
     emi_id = Octect(value=EMIId.commonEmi)
     emi_id_a = Octect(value=0)
     emi_id_b = Octect(value=0)

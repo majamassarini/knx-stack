@@ -5,6 +5,11 @@ CONNECTION_HEADER_LEN = 4
 
 
 def create(state, status, sequence_counter):
+    """Encode the KNXnet/IP tunneling connection header into raw message bytes.
+
+    Builds the four-byte connection header containing the header length,
+    communication channel ID, sequence counter, and status fields.
+    """
     connection_header = NetMsg(
         [
             Octect(value=CONNECTION_HEADER_LEN),

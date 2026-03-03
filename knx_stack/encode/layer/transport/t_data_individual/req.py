@@ -9,6 +9,11 @@ if TYPE_CHECKING:
 
 
 def encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
+    """Encode a T_Data_Individual request at the transport layer into raw message bytes.
+
+    Adds the transport TPCI byte for an individual data PDU and delegates to the
+    network layer N_Data_Individual request encoder.
+    """
     final_msg = msg
     ldata = layer.L_Data()
     if state.address_type == layer.AddressType.individual:

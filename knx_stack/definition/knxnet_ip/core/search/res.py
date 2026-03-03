@@ -6,6 +6,8 @@ if TYPE_CHECKING:
 
 
 class Msg(NamedTuple):
+    """KNXnet/IP search response message."""
+
     ip: str
     port: int
     individual_address: knx_stack.Address

@@ -9,6 +9,11 @@ if TYPE_CHECKING:
 
 
 def encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
+    """Encode the USB HID report header packet info field into raw message bytes.
+
+    Prepends the packet info byte (sequence number and packet type nibbles) and
+    data length byte to the message, then delegates to the report_identifier encoder.
+    """
     sequence_number = 1
     packet_type = PacketType.allInOnePacket
     packet_info = Octect(Nibbles(high=sequence_number, low=packet_type))

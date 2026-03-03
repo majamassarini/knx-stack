@@ -8,6 +8,11 @@ if TYPE_CHECKING:
 
 
 def encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
+    """Encode an L_Data request at the link layer into raw message bytes.
+
+    Applies link-layer L_Data encoding, then delegates to the cEMI L_Data
+    request encoder.
+    """
     new_msg = ll_encode(state, msg)
     final_msg = req.encode(state, new_msg)
     return final_msg

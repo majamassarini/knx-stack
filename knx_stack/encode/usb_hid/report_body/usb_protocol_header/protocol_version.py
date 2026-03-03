@@ -8,6 +8,11 @@ if TYPE_CHECKING:
 
 
 def encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
+    """Encode the USB HID USB protocol header protocol version field into raw message bytes.
+
+    Prepends a zero protocol version byte to the message, then delegates to
+    the packet_info encoder.
+    """
     header_length = Octect(value=0)
     new_msg = Msg([header_length] + msg)
     final_msg = packet_info.encode(state, new_msg)

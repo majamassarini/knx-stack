@@ -11,6 +11,11 @@ if TYPE_CHECKING:
 
 
 def encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
+    """Encode the USB HID USB protocol header protocol identifier field into raw message bytes.
+
+    Prepends the KNX tunnel protocol ID byte to the message, then delegates
+    to the body_length encoder.
+    """
     protocol_id = Octect(value=ProtocolId.KNXTunnel)
     new_msg = Msg([protocol_id] + msg)
     final_msg = body_length.encode(state, new_msg)

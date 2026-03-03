@@ -6,6 +6,8 @@ if TYPE_CHECKING:
 
 
 class Msg(NamedTuple):
+    """KNXnet/IP disconnect response message."""
+
     communication_channel_id: int
     status: knx_stack.knxnet_ip.ErrorCodes
 

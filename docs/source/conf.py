@@ -42,6 +42,9 @@ autodoc_default_options = {
     "members": True,
     "undoc-members": True,
 }
+# Many modules share the name 'Msg'; suppress the resulting ambiguous
+# cross-reference warnings that autodoc emits for NamedTuple fields.
+suppress_warnings = ["ref.python"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

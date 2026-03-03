@@ -8,6 +8,11 @@ if TYPE_CHECKING:
 
 
 def encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
+    """Encode the USB HID report header report identifier field into raw message bytes.
+
+    Prepends the KNX data exchange report identifier byte to the message,
+    producing the final framed USB HID report.
+    """
     packet_info = Octect(value=KNX_DATA_EXCHANGE)
     final_msg = Msg([packet_info] + msg)
     return final_msg

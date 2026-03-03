@@ -7,6 +7,11 @@ if TYPE_CHECKING:
 
 
 def nl_encode(state: knx_stack.State, msg: knx_stack.Msg) -> knx_stack.Msg:
+    """Encode an N_Data_Group PDU at the network layer into raw message bytes.
+
+    Prepends the destination group address and NPDU length to the message using
+    the first registered address from the state.
+    """
     new_msg = msg
     for address in state.get_addresses():
         npdu_length = Octect(value=(len(msg) - 1))

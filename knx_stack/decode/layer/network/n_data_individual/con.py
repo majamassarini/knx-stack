@@ -9,6 +9,12 @@ if TYPE_CHECKING:
 
 
 def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
+    """Decode an N_Data_Individual confirmation at the network layer from raw message bytes.
+
+    Inspects the NSDU field in the state and dispatches to the appropriate
+    transport layer confirmation decoder (individual data, connect, disconnect,
+    or data connected).
+    """
     result: Iterable[NamedTuple] = []
     if state.ldata.nsdu == NSDU.T_Data_Individual_PDU:
         result = transport.t_data_individual.con.decode(state, msg)
