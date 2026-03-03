@@ -36,7 +36,9 @@ class Request(asyncio.DatagramProtocol):
         self._transport = None
         self._local_addr = local_addr
         self._local_port = local_port
-        self._state = knx_stack.knxnet_ip.State(knx_stack.Medium.knxnet_ip, None, None)
+        self._state = knx_stack.knxnet_ip.State(
+            knx_stack.Medium.knxnet_ip, None, None
+        )
 
         self.logger = logging.getLogger(__name__)
 
@@ -110,7 +112,9 @@ class Listen(asyncio.DatagramProtocol):
 
     def __init__(self):
         self._transport = None
-        self._state = knx_stack.knxnet_ip.State(knx_stack.Medium.knxnet_ip, None, None)
+        self._state = knx_stack.knxnet_ip.State(
+            knx_stack.Medium.knxnet_ip, None, None
+        )
 
         self.logger = logging.getLogger(__name__)
 

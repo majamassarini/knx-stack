@@ -1,11 +1,18 @@
+from __future__ import annotations
 import logging
 from collections.abc import Iterable
 from knx_stack.decode import cemi
 from knx_stack.definition.knxnet_ip import ErrorCodes
 from knx_stack.definition.knxnet_ip.tunneling.req import Msg
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
-def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
+def decode(
+    state: knx_stack.State, msg: knx_stack.Msg
+) -> Iterable[knx_stack.knxnet_ip.tunneling.req.Msg]:
     """
     >>> import knx_stack
     >>> asap = knx_stack.ASAP(1)
@@ -20,23 +27,30 @@ def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
     >>> req
     [TunnelingReq(sequence counter=1, status=<ErrorCodes.E_NO_ERROR: 0>), GroupValueWriteInd (DPT_Switch {'action': 'on'} for asap 1)]
     """
-    result = []
+    result: list[knx_stack.knxnet_ip.tunneling.req.Msg] = []
     (size, body) = msg.short()
-    (communication_channel_id, sequence_counter, _, body) = body.header()
+    (communication_channel_id, sequence_counter, _, body) = body.header()  # type: ignore[attr-defined]
     logging.getLogger(__name__).debug(
-        "knxnet_ip.tunneling.decode.req sequence counter={}".format(sequence_counter)
+        "knxnet_ip.tunneling.decode.req sequence counter={}".format(
+            sequence_counter
+        )
     )
     if state.sequence_counter_remote == sequence_counter:
         result.append(
-            Msg(sequence_counter=sequence_counter, status=ErrorCodes.E_NO_ERROR)
+            Msg(
+                sequence_counter=sequence_counter, status=ErrorCodes.E_NO_ERROR
+            )
         )
         result_tmp = cemi.msg_code.decode(state, body)
         if result_tmp:
-            result.extend(result_tmp)
+            result.extend(result_tmp)  # type: ignore[arg-type]
     else:
         if state.sequence_counter_remote == (sequence_counter + 1):
             result.append(
-                Msg(sequence_counter=sequence_counter, status=ErrorCodes.E_NO_ERROR)
+                Msg(
+                    sequence_counter=sequence_counter,
+                    status=ErrorCodes.E_NO_ERROR,
+                )
             )
         else:
             result.append(

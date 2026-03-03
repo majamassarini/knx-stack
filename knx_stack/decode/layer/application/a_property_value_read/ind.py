@@ -1,9 +1,16 @@
+from __future__ import annotations
 from collections.abc import Iterable
-from knx_stack.definition.layer.application.a_property_value_read.ind import Msg
+from knx_stack.definition.layer.application.a_property_value_read.ind import (
+    Msg,
+)
 from knx_stack.decode.layer.application import a_property_value
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
-def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
+def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[Msg]:
     """
     >>> import knx_stack
     >>> asap = knx_stack.ASAP(0)

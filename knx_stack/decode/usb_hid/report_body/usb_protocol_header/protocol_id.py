@@ -1,15 +1,19 @@
+from __future__ import annotations
 from collections.abc import Iterable
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 from knx_stack.definition.usb_hid import ProtocolId
 from knx_stack.decode.cemi import emi_id
 from knx_stack.decode.usb_hid.report_body.usb_protocol_header.bus_access_server_feature import (
     service_identifier,
 )
 
+if TYPE_CHECKING:
+    import knx_stack
 
-def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[NamedTuple]:
+
+def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     (head, body) = msg.octect()
-    result = []
+    result: Iterable[NamedTuple] = []
     if head.value == ProtocolId.KNXTunnel:
         result = emi_id.decode(state, body)
     elif head.value == ProtocolId.BusAccessServerFeatureService:

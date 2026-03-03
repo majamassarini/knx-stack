@@ -1,5 +1,10 @@
+from __future__ import annotations
 from knx_stack.address import Address
 from enum import Enum
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
 class USB(Enum):
@@ -56,9 +61,9 @@ class State:
 
     def __init__(
         self,
-        medium: "knx_stack.Medium",
-        association_table: "knx_stack.AssociationTable",
-        groupobject_table: "knx_stack.GroupObjectTable",
+        medium: knx_stack.Medium,
+        association_table: knx_stack.AssociationTable,
+        groupobject_table: knx_stack.GroupObjectTable,
     ):
         self._association_table = association_table
         self._groupobject_table = groupobject_table
@@ -157,7 +162,9 @@ class State:
         return self._association_table.individual_address
 
     def get_tsap(self):
-        return self._association_table.get_tsap(Address(self._ldata.destination))
+        return self._association_table.get_tsap(
+            Address(self._ldata.destination)
+        )
 
     def get_asaps(self):
         tsap = self.get_tsap()

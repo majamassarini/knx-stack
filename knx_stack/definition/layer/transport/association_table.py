@@ -1,5 +1,10 @@
+from __future__ import annotations
 from collections.abc import Iterable
 from collections import namedtuple
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 Association = namedtuple("Association", ["asap", "address"])
 
@@ -116,27 +121,28 @@ class AssociationTable(object):
 
     def __init__(
         self,
-        address_table: "knx_stack.AddressTable",
+        address_table: knx_stack.AddressTable,
         associations: Iterable["Association"] = None,
     ):
         self._address_table = address_table
-        self._asap_addresses = dict()
-        self._tsap_asaps = dict()
+        self._asap_addresses: dict = dict()
+        self._tsap_asaps: dict = dict()
         self.associate(
-            ASAP(0, "individual address"), [self._address_table.individual_address]
+            ASAP(0, "individual address"),
+            [self._address_table.individual_address],  # type: ignore[list-item]
         )
         if associations:
             for association in associations:
                 self.associate(association.asap, [association.address])
 
     @property
-    def individual_address(self) -> "knx_stack.Address":
+    def individual_address(self) -> knx_stack.Address:
         return self._address_table.individual_address
 
-    def get_tsap(self, address: "knx_stack.GroupAddress") -> int:
+    def get_tsap(self, address: knx_stack.GroupAddress) -> int:
         return self._address_table.get_tsap(address)
 
-    def get_tsaps(self, asap: "knx_stack.ASAP") -> Iterable[int]:
+    def get_tsaps(self, asap: knx_stack.ASAP) -> Iterable[int]:
         tsaps = [
             self.get_tsap(address)
             for address in self._asap_addresses[asap]
@@ -144,12 +150,12 @@ class AssociationTable(object):
         ]
         return tsaps
 
-    def get_asaps(self, tsap: int) -> Iterable["knx_stack.ASAP"]:
+    def get_asaps(self, tsap: int) -> Iterable[knx_stack.ASAP]:
         return self._tsap_asaps[tsap]
 
     def get_asaps_from_address(
-        self, address: "knx_stack.GroupAddress"
-    ) -> Iterable["knx_stack.ASAP"]:
+        self, address: knx_stack.GroupAddress
+    ) -> Iterable[knx_stack.ASAP]:
         tsap = self._address_table.get_tsap(address)
         return self._tsap_asaps[tsap]
 
@@ -171,7 +177,7 @@ class AssociationTable(object):
         return addresses
 
     def _rebuild_tsap_asaps(self):
-        self._tsap_asaps = dict()
+        self._tsap_asaps: dict = dict()
         for asap_, addresses in self._asap_addresses.items():
             for address_ in addresses:
                 tsap = self._address_table.get_tsap(address_)
@@ -180,14 +186,16 @@ class AssociationTable(object):
                 self._tsap_asaps[tsap].append(asap_)
 
     def associate(
-        self, asap: "knx_stack.ASAP", addresses: Iterable["knx_stack.GroupAddress"]
+        self,
+        asap: knx_stack.ASAP,
+        addresses: Iterable[knx_stack.GroupAddress],
     ) -> None:
         for address in addresses:
             if (
                 address not in self._address_table.addresses
                 and address is not self.individual_address
             ):
-                self._address_table.add(address)
+                self._address_table.add(address)  # type: ignore[arg-type]
 
         if asap not in self._asap_addresses:
             self._asap_addresses[asap] = list()
@@ -197,7 +205,9 @@ class AssociationTable(object):
         self._rebuild_tsap_asaps()
 
     def disassociate(
-        self, asap: "knx_stack.ASAP", addresses: Iterable["knx_stack.GroupAddress"]
+        self,
+        asap: knx_stack.ASAP,
+        addresses: Iterable[knx_stack.GroupAddress],
     ) -> None:
         for address in addresses:
             if address != self.individual_address:

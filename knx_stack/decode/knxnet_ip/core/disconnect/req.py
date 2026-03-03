@@ -1,8 +1,15 @@
+from __future__ import annotations
 from collections.abc import Iterable
 from knx_stack.definition.knxnet_ip.core.disconnect.req import Msg
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import knx_stack
 
 
-def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
+def decode(
+    state: knx_stack.State, msg: knx_stack.Msg
+) -> Iterable[knx_stack.knxnet_ip.core.disconnect.req.Msg]:
     """
     >>> import knx_stack
     >>> from knx_stack.decode.knxnet_ip.core.disconnect.req import decode
@@ -13,13 +20,13 @@ def decode(state: "knx_stack.State", msg: "knx_stack.Msg") -> Iterable[Msg]:
     >>> res
     [DisconnectReq (control endpoint = 127.0.0.1:1234)]
     """
-    result = []
+    result: list[knx_stack.knxnet_ip.core.disconnect.req.Msg] = []
     (size, body) = msg.short()
     (communication_channel_id, body) = body.octect()
     (reserved, body) = body.octect()
 
     # Decode HPAI (Host Protocol Address Information)
-    (ip, port, body) = body.HPAI()
+    (ip, port, body) = body.HPAI()  # type: ignore[attr-defined]
 
     result.append(
         Msg(
