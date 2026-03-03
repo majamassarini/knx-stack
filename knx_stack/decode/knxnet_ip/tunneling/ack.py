@@ -22,8 +22,8 @@ def decode(
     >>> res
     [TunnelingAck(sequence counter=1, status=0)]
     """
-    (size, body) = msg.short()
-    (communication_channel_id, sequence_counter, status, body) = body.header()  # type: ignore[attr-defined]
+    size, body = msg.short()
+    communication_channel_id, sequence_counter, status, body = body.header()  # type: ignore[attr-defined]
     if state.sequence_counter_local == sequence_counter:
         state.sequence_counter_local += 1
     logging.getLogger(__name__).info(

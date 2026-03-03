@@ -28,8 +28,8 @@ def decode(
     [TunnelingReq(sequence counter=1, status=<ErrorCodes.E_NO_ERROR: 0>), GroupValueWriteInd (DPT_Switch {'action': 'on'} for asap 1)]
     """
     result: list[knx_stack.knxnet_ip.tunneling.req.Msg] = []
-    (size, body) = msg.short()
-    (communication_channel_id, sequence_counter, _, body) = body.header()  # type: ignore[attr-defined]
+    size, body = msg.short()
+    communication_channel_id, sequence_counter, _, body = body.header()  # type: ignore[attr-defined]
     logging.getLogger(__name__).debug(
         "knxnet_ip.tunneling.decode.req sequence counter={}".format(
             sequence_counter

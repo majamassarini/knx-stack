@@ -22,16 +22,16 @@ def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     Reads the feature ID byte and returns a named tuple describing the connection
     status or the active EMI type, depending on the feature reported.
     """
-    (head, body) = msg.octect()
+    head, body = msg.octect()
     result: Iterable[NamedTuple] = []
     if head.value == FeatureId.busConnectionStatus:
-        (head, _) = body.octect()
+        head, _ = body.octect()
         if head.value == 0x00:
             result = [ConnectionStatus(status="Disconnected")]
         elif head.value == 0x01:
             result = [ConnectionStatus(status="Connected")]
     elif head.value == FeatureId.activeEMIType:
-        (head, _) = body.octect()
+        head, _ = body.octect()
         if head.value == EMIId.commonEmi:
             result = [EMIType(type="cEMI")]
         elif head.value == EMIId.emi1:

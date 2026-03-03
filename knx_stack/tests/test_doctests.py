@@ -2,7 +2,6 @@ import unittest
 import doctest
 import knx_stack
 
-
 tests = list()
 tests.append(doctest.DocTestSuite(knx_stack.datapointtypes))
 tests.append(doctest.DocTestSuite(knx_stack.layer.link.ldata))
