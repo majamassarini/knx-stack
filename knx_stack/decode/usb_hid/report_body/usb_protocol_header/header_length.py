@@ -18,7 +18,7 @@ def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     Validates the header length byte and, if it matches the expected KNX USB
     transfer protocol header length, delegates to the body_length decoder.
     """
-    (head, body) = msg.octect()
+    head, body = msg.octect()
     result: Iterable[NamedTuple] = []
     if head.value == KNX_USB_TRANSFER_PROTOCOL_HEADER_LENGTH:
         result = body_length.decode(state, body)

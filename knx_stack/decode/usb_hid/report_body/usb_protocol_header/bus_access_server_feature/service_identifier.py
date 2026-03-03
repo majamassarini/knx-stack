@@ -16,14 +16,14 @@ def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     Reads the service ID byte and, for DeviceFeatureInfo or DeviceFeatureResponse
     services, delegates to the feature_identifier decoder.
     """
-    (head, msg) = msg.octect()
+    head, msg = msg.octect()
     result: Iterable[NamedTuple] = []
     if head.value == ServiceId.DeviceFeatureInfo:
-        (head, body) = msg.short()  # type: ignore[assignment]
+        head, body = msg.short()  # type: ignore[assignment]
         if head.value == 0x0000:
             result = feature_identifier.decode(state, body)
     if head.value == ServiceId.DeviceFeatureResponse:
-        (head, body) = msg.short()  # type: ignore[assignment]
+        head, body = msg.short()  # type: ignore[assignment]
         if head.value == 0x0000:
             result = feature_identifier.decode(state, body)
     return result

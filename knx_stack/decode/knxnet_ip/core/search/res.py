@@ -23,14 +23,14 @@ def decode(
     [SearchRes(ip=172.31.10.250, port=3671, individual address=0x0200)]
     """
     result: list[knx_stack.knxnet_ip.core.search.res.Msg] = []
-    (size, body) = msg.short()
-    (struct_len, body) = body.octect()
-    (ipv4_udp, body) = body.octect()
-    (ip, body) = body.long()
-    (port, body) = body.short()
-    (knx_medium, body) = body.octect()
-    (device_status, body) = body.octect()
-    (individual_address, body) = body.short()
+    size, body = msg.short()
+    struct_len, body = body.octect()
+    ipv4_udp, body = body.octect()
+    ip, body = body.long()
+    port, body = body.short()
+    knx_medium, body = body.octect()
+    device_status, body = body.octect()
+    individual_address, body = body.short()
     result.append(
         Msg(
             ip=socket.inet_ntoa(struct.pack("!I", ip.value)),

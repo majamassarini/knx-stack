@@ -346,19 +346,19 @@ class L_Data(LittleEndianStructure):
     @staticmethod
     def make_from(msg):
         l_data = L_Data()
-        (cntrl1, body) = msg.octect()
+        cntrl1, body = msg.octect()
         l_data._cntrl1 = Cntrl1(value=cntrl1.value)
-        (cntrl2, body) = body.octect()
+        cntrl2, body = body.octect()
         l_data._cntrl2 = Cntrl2(value=cntrl2.value)
-        (source, body) = body.short()
+        source, body = body.short()
         l_data._source = source.value
-        (destination, body) = body.short()
+        destination, body = body.short()
         l_data._destination = destination.value
-        (npdu_length, body) = body.octect()
+        npdu_length, body = body.octect()
         l_data._npdu_length = npdu_length.value
-        (tpci, body) = body.octect()
+        tpci, body = body.octect()
         l_data._tpci = TPCI(value=tpci.value)
-        (apci, body) = body.octect()
+        apci, body = body.octect()
         l_data._apci = APCI(value=apci.value)
 
         if body:

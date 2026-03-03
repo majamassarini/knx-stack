@@ -1,6 +1,5 @@
 import knx_stack
 
-
 if __name__ == "__main__":
     address_table = knx_stack.definition.AddressTable(0x102D, [], 255)
     association_table = knx_stack.definition.AssociationTable(

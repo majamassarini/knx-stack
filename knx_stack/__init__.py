@@ -24,7 +24,6 @@ from knx_stack.decode.usb_hid.report_header.report_identifier import (
 from knx_stack.decode.knxnet_ip.header import decode as knxnet_ip_decode
 from knx_stack import client
 
-
 encode_mapping = {
     knxnet_ip.core.connect.req.Msg: encode.knxnet_ip.core.connect.req.encode,
     knxnet_ip.core.disconnect.req.Msg: encode.knxnet_ip.core.disconnect.req.encode,

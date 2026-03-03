@@ -16,7 +16,7 @@ def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     Reads the two-byte body length, trims the message to the indicated length,
     and delegates to the protocol_id decoder.
     """
-    (head, body) = msg.short()
+    head, body = msg.short()
     body_length = head.value
     the_other_header_octects = 4
     return protocol_id.decode(

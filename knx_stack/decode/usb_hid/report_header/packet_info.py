@@ -17,12 +17,12 @@ def decode(state: knx_stack.State, msg: knx_stack.Msg) -> Iterable[NamedTuple]:
     Reads the packet info byte and data length, then delegates to the
     protocol_version decoder for all-in-one packet frames.
     """
-    (packet_info_byte, body) = msg.octect()
+    packet_info_byte, body = msg.octect()
     packet_type = packet_info_byte.nibble.low
     result: Iterable[NamedTuple] = []
 
     if packet_type == PacketType.allInOnePacket:
-        (data_length, body) = body.octect()
+        data_length, body = body.octect()
         result = protocol_version.decode(
             state, Msg(body[0 : data_length.value])
         )
