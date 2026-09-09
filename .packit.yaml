@@ -13,6 +13,8 @@ issue_repository: https://github.com/majamassarini/knx-stack
 jobs:
 - job: copr_build
   trigger: pull_request
-  targets: fedora-all
+  targets:
+    - fedora-stable
+    - fedora-rawhide
   owner: mmassari
   project: knx-stack
