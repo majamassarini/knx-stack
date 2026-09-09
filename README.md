@@ -1,7 +1,7 @@
 # knx-stack
 
 [![Unit Tests](https://github.com/majamassarini/knx-stack/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/majamassarini/knx-stack/actions/workflows/build.yml)
-[![codecov](https://codecov.io/gh/majamassarini/knx-stack/branch/main/graph/badge.svg?token=HQ27JK26MT)](https://codecov.io/gh/majamassarini/knx-stack)
+[![codecov](https://codecov.io/gh/majamassarini/knx-stack/branch/main/graph/badge.svg)](https://codecov.io/gh/majamassarini/knx-stack)
 [![Documentation Status](https://readthedocs.org/projects/knx-stack/badge/?version=latest)](https://knx-stack.readthedocs.io/en/latest/?badge=latest)
 
 A Python 3 KNX stack, not complete but easily extensible.
